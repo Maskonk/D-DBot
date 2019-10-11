@@ -16,7 +16,6 @@ class Dnd(Cog):
     @commands.command()
     async def stats(self, ctx):
         """Roll 4d6 dropping lowest for D&D"""
-        # TODO: stats tag a user
         # TODO: over/below average
         message = f"{ctx.author.mention} your stats are: \n-----------\n"
         full_stats = []
@@ -44,6 +43,7 @@ class RightingWrongs(Cog):
     @commands.command()
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
+        # TODO: have a command to update the next session date
         await ctx.send("The next session of Righting Wrongs will be on Thursday the 17th of October, "
                        "starting at 18h30 Belgian time or 17h30 UK time.")
 
