@@ -60,7 +60,7 @@ async def git(ctx):
 
 @client.command(pass_context=True)
 async def github(ctx):
-    await ctx.send("The code for this bot is not currently on Github")
+    await ctx.send("The code for this bot is at: https://github.com/Maskonk/D-DBot")
 
 
 client.add_cog(Dnd(client))
