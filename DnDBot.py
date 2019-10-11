@@ -32,14 +32,25 @@ class Dnd(Cog):
         await ctx.send(message)
 
 
+class RightingWrongs(Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def status(self, ctx):
+        """Status of Punky's Job interview."""
+        await ctx.send("Punky has heard back from the company, the interview is on Wednesday so Thursday is fine.")
+
+    @commands.command()
+    async def next(self, ctx):
+        """The next session of the Righting Wrongs Campaign."""
+        await ctx.send("The next session of Righting Wrongs will be on Thursday the 17th of October, "
+                       "starting at 18h30 Belgian time or 17h30 UK time.")
+
+
 @client.event
 async def on_ready():
     print("Online")
-
-
-@client.command(pass_context=True)
-async def status(ctx):
-    await ctx.send("Punky has heard back from the company, the interview is on Wednesday so Thursday is fine.")
 
 
 @client.command(pass_context=True)
@@ -53,6 +64,7 @@ async def github(ctx):
 
 
 client.add_cog(Dnd(client))
+client.add_cog(RightingWrongs(client))
 client.run(token)
 
 
