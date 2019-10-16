@@ -36,11 +36,6 @@ class RightingWrongs(Cog):
         self.bot = bot
 
     @commands.command()
-    async def status(self, ctx):
-        """Status of Punky's Job interview."""
-        await ctx.send("Punky has heard back from the company, the interview is on Wednesday so Thursday is fine.")
-
-    @commands.command()
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
         # TODO: have a command to update the next session date
