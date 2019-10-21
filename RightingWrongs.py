@@ -1,9 +1,7 @@
-from discord.ext.commands import Bot, Cog
+from discord.ext.commands import Cog
 from discord.ext import commands
 from datetime import datetime
 import calendar
-import random
-import re
 
 
 class RightingWrongs(Cog):
