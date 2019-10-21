@@ -35,5 +35,3 @@ async def github(ctx):
 client.add_cog(Dnd(client))
 client.add_cog(RightingWrongs(client))
 client.run(token)
-
-
