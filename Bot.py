@@ -20,13 +20,13 @@ async def suggestions(ctx):
                    "free to message Punky with your idea. (No promises it will be implemented though)")
 
 
-@client.command(pass_context=True)
+@client.command()
 async def git(ctx):
     """Alternate command for those trying to get the github link."""
     await ctx.send("git commit -m \"Did you mean .github command?\". (A git joke)")
 
 
-@client.command(pass_context=True)
+@client.command(aliases=["code", "Code"])
 async def github(ctx):
     """Link to the github repo for this bot."""
     await ctx.send("The code for this bot is at: https://github.com/Maskonk/DnDBot")
