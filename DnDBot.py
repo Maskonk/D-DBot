@@ -39,8 +39,7 @@ class RightingWrongs(Cog):
         self.next_session = datetime(2019, 10, 31, 17, 30, 00)
         self.authorized = [167967067222441984, 168009927015661568]
 
-    #https://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0
-    @commands.command()
+    @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil"])
     async def worldanvil(self, ctx):
         """Link to the campaign's World Anvil page."""
         await ctx.send("The link to the World Anvil page is:\nhttps://www.worldanvil.com/w/ehldaron-sebaddon")
@@ -51,7 +50,7 @@ class RightingWrongs(Cog):
         await ctx.send("The link to the calender page is:"
                        "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
 
-    @commands.command()
+    @commands.command(aliases=["nextsession", "Next", "next_session"])
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
 
@@ -62,7 +61,7 @@ class RightingWrongs(Cog):
                        f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
                        f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time.")
 
-    @commands.command()
+    @commands.command(aliases=["Update", ])
     async def update(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
         Format dd/mm/yy hh:mm, hour in UK time."""
@@ -85,7 +84,8 @@ class RightingWrongs(Cog):
         command = self.bot.get_command("next")
         await ctx.invoke(command)
 
-    def get_nth(self, day):
+    def get_indicator(self, day):
+        """Returns the indicator for the given number based on the last digit."""
         nth = {"1": "st", "2": "nd", "3": "rd"}
         if str(day)[-1] in nth.keys():
             return nth[str(day)[-1]]
@@ -101,13 +101,13 @@ async def on_ready():
 @client.command(pass_context=True)
 async def git(ctx):
     """Alternate command for those trying to get the github link."""
-    await ctx.send("git commit -m \"Did you mean .github command?\"")
+    await ctx.send("git commit -m \"Did you mean .github command?\". (A git joke)")
 
 
 @client.command(pass_context=True)
 async def github(ctx):
     """Link to the github repo for this bot."""
-    await ctx.send("The code for this bot is at: https://github.com/Maskonk/D-DBot")
+    await ctx.send("The code for this bot is at: https://github.com/Maskonk/DnDBot")
 
 
 client.add_cog(Dnd(client))
