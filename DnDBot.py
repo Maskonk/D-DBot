@@ -40,7 +40,7 @@ class RightingWrongs(Cog):
     @commands.command()
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
-        # TODO: have a command to update the next session date
+        
         await ctx.send(f"The next session of Righting Wrongs will be on "
                        f"{calendar.day_name[self.next_session.weekday()]} "
                        f"the {self.next_session.day}{self.get_nth(self.next_session.day)} of "
@@ -49,10 +49,11 @@ class RightingWrongs(Cog):
                        f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time.")
 
     @commands.command()
-    async def update(self, ctx, date, *time):
+    async def update(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky."""
-        # TODO: have a command to update the next session date
+
         await ctx.send(date)
+        await ctx.send(time)
 
     def get_nth(self, day):
         nth = {"1": "st", "2": "nd", "3": "rd"}
