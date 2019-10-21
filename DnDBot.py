@@ -37,6 +37,7 @@ class RightingWrongs(Cog):
     def __init__(self, bot):
         self.bot = bot
         self.next_session = datetime(2019, 10, 31, 17, 30, 00)
+        self.authorized = [167967067222441984, 168009927015661568]
 
     @commands.command()
     async def next(self, ctx):
@@ -53,6 +54,9 @@ class RightingWrongs(Cog):
     async def update(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
         Format dd/mm/yy hh:mm, hour in UK time."""
+        if ctx.author.id not in self.authorized:
+            await ctx.send("You are not authorized to update the session date.")
+            return
 
         date = date.split("/")
         if int(date[2]) < 100:
