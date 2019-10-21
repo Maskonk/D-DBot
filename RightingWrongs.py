@@ -24,13 +24,18 @@ class RightingWrongs(Cog):
     @commands.command(aliases=["nextsession", "Next", "next_session"])
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
-
+        date_difference = self.next_session - datetime.now()
+        days = divmod(date_difference.total_seconds(), 86400)
+        hours = divmod(days[1], 3600)
+        minutes = divmod(hours[1], 60)
+        seconds = divmod(minutes[1], 1)
         await ctx.send(f"The next session of Righting Wrongs will be on "
                        f"{calendar.day_name[self.next_session.weekday()]} "
                        f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of "
                        f"{calendar.month_name[self.next_session.month]}, "
                        f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
-                       f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time.")
+                       f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time. "
+                       f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
 
     @commands.command(aliases=["Update", ])
     async def update(self, ctx, date, time="17:30"):
