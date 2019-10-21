@@ -13,7 +13,7 @@ async def on_ready():
     print("Online")
 
 
-@client.command(aliases=["Suggestions", "Suggest", "suggest"])
+@client.command(aliases=["Suggestions", "Suggest", "suggest", "suggestion", "Suggestion"])
 async def suggestions(ctx):
     """Message pertaining to suggestions for the bot."""
     await ctx.send("If you have any suggestions for new features or an existing feature that could be made better feel "
