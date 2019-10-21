@@ -5,6 +5,7 @@ import calendar
 import random
 import re
 from RightingWrongs import RightingWrongs
+from Dnd import Dnd
 
 bot_prefix = "."
 with open('token.txt', 'r') as f:
