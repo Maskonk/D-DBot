@@ -70,6 +70,8 @@ class RightingWrongs(Cog):
         self.next_session = datetime(int(date[2]), int(date[1]), int((date[0])), (int(time[0])), int(time[1]), 00)
 
         await ctx.send("Date updated.")
+        command = self.bot.get_command("next")
+        await ctx.invoke(command)
 
     def get_nth(self, day):
         nth = {"1": "st", "2": "nd", "3": "rd"}
