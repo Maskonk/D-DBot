@@ -1,6 +1,7 @@
 from discord.ext.commands import Bot, Cog
 from discord.ext import commands
 from datetime import datetime
+import calendar
 import random
 
 bot_prefix = "."
@@ -34,13 +35,31 @@ class Dnd(Cog):
 class RightingWrongs(Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.next_session = datetime(2019, 10, 31, 17, 30, 00)
 
     @commands.command()
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
         # TODO: have a command to update the next session date
-        await ctx.send("The next session of Righting Wrongs will be on Thursday the 17th of October, "
-                       "starting at 18h30 Belgian time or 17h30 UK time.")
+        await ctx.send(f"The next session of Righting Wrongs will be on "
+                       f"{calendar.day_name[self.next_session.weekday()]} "
+                       f"the {self.next_session.day}{self.get_nth(self.next_session.day)} of "
+                       f"{calendar.month_name[self.next_session.month]}, "
+                       f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
+                       f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time.")
+
+    @commands.command()
+    async def update(self, ctx, date, *time):
+        """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky."""
+        # TODO: have a command to update the next session date
+        await ctx.send(date)
+
+    def get_nth(self, day):
+        nth = {"1": "st", "2": "nd", "3": "rd"}
+        if str(day)[-1] in nth.keys():
+            return nth[str(day)[-1]]
+        else:
+            return "th"
 
 
 @client.event
