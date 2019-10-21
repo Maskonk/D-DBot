@@ -39,6 +39,18 @@ class RightingWrongs(Cog):
         self.next_session = datetime(2019, 10, 31, 17, 30, 00)
         self.authorized = [167967067222441984, 168009927015661568]
 
+    #https://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0
+    @commands.command()
+    async def worldanvil(self, ctx):
+        """Link to the campaign's World Anvil page."""
+        await ctx.send("The link to the World Anvil page is:\nhttps://www.worldanvil.com/w/ehldaron-sebaddon")
+
+    @commands.command()
+    async def calender(self, ctx):
+        """Link to the campaign's World Anvil page."""
+        await ctx.send("The link to the calender page is:"
+                       "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
+
     @commands.command()
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
