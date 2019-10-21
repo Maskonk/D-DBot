@@ -56,7 +56,7 @@ class RightingWrongs(Cog):
 
         await ctx.send(f"The next session of Righting Wrongs will be on "
                        f"{calendar.day_name[self.next_session.weekday()]} "
-                       f"the {self.next_session.day}{self.get_nth(self.next_session.day)} of "
+                       f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of "
                        f"{calendar.month_name[self.next_session.month]}, "
                        f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
                        f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time.")
