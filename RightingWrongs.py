@@ -38,6 +38,19 @@ class RightingWrongs(Cog):
         """Shows the number of sessions played so far this campaign."""
         await ctx.send(f"The party has had {self.stats['statistics']['sessions']} sessions so far this campaign.")
 
+    @commands.command(aliases=["updatesessions"])
+    async def addsession(self, ctx):
+        """Adds one to the session count. Restricted to Seb and Punky."""
+        if ctx.author.id not in self.authorized:
+            await ctx.send("You are not authorized to update the session count.")
+            return
+        self.stats['statistics']["sessions"] += 1
+        with open('stats.json', 'w') as f:
+            json.dump(self.stats, f)
+        await ctx.send("Session count updated.")
+        command = self.bot.get_command("sessions")
+        await ctx.invoke(command)
+
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil"])
     async def worldanvil(self, ctx):
         """Link to the campaign's World Anvil page."""
