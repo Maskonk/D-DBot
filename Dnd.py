@@ -59,3 +59,18 @@ class Dnd(Cog):
                 msg += "None\n"
             msg += "```"
         await ctx.send(msg)
+
+    @commands.command()
+    async def character(self, ctx, name):
+        """Shows detailed info for a given character name."""
+        characters = self.stats["characters"]["alive"] + self.stats["characters"]["retired"] + \
+            self.stats["characters"]["dead"]
+        chosen = None
+        for character in characters:
+            if character["name"] == name:
+                chosen = character
+        if not chosen:
+            await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
+            return
+
+        await ctx.send(f"```Name: {chosen['name']}:\nLevel: {chosen['level']}\nClass: {chosen['class']}```")
