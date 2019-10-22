@@ -20,6 +20,16 @@ class RightingWrongs(Cog):
         """Shows the number of near Total Party Kills so far this campaign."""
         await ctx.send(f"The party has had {self.stats['statistics']['neartpks']} near Total Party Kills so far this campaign.")
 
+    @commands.command(aliases=["addtpk"])
+    async def addneartpk(self, ctx):
+        """Shows the number of near Total Party Kills so far this campaign."""
+        self.stats['statistics']["neartpks"] += 1
+        with open('stats.json', 'w') as f:
+            json.dump(self.stats, f)
+        await ctx.send("Near Total Party Kills updated.")
+        command = self.bot.get_command("neartpks")
+        await ctx.invoke(command)
+
     @commands.command(aliases=["played"])
     async def sessions(self, ctx):
         """Shows the number of sessions played so far this campaign."""
