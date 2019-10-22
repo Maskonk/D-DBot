@@ -20,8 +20,8 @@ class RightingWrongs(Cog):
         """Shows the number of near Total Party Kills so far this campaign."""
         await ctx.send(f"The party has had {self.stats['statistics']['neartpks']} near Total Party Kills so far this campaign.")
 
-    @commands.command(aliases=["addtpk", "updatetpks"])
-    async def addneartpk(self, ctx):
+    @commands.command(aliases=["addtpk", "updatetpks", "addneartpk", "addNearTpk"])
+    async def add_near_tpk(self, ctx):
         """Adds one to the near TPK count. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to update the near TPK count.")
@@ -38,8 +38,8 @@ class RightingWrongs(Cog):
         """Shows the number of sessions played so far this campaign."""
         await ctx.send(f"The party has had {self.stats['statistics']['sessions']} sessions so far this campaign.")
 
-    @commands.command(aliases=["updatesessions"])
-    async def addsession(self, ctx):
+    @commands.command(aliases=["updatesessions", "addsession", "addSession"])
+    async def add_session(self, ctx):
         """Adds one to the session count. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to update the session count.")
@@ -51,8 +51,8 @@ class RightingWrongs(Cog):
         command = self.bot.get_command("sessions")
         await ctx.invoke(command)
 
-    @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil"])
-    async def worldanvil(self, ctx):
+    @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil", "worldanvil"])
+    async def world_anvil(self, ctx):
         """Link to the campaign's World Anvil page."""
         await ctx.send("The link to the World Anvil page is:\nhttps://www.worldanvil.com/w/ehldaron-sebaddon")
 
