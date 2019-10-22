@@ -20,9 +20,12 @@ class RightingWrongs(Cog):
         """Shows the number of near Total Party Kills so far this campaign."""
         await ctx.send(f"The party has had {self.stats['statistics']['neartpks']} near Total Party Kills so far this campaign.")
 
-    @commands.command(aliases=["addtpk"])
+    @commands.command(aliases=["addtpk", "updatetpks"])
     async def addneartpk(self, ctx):
         """Adds one to the near TPK count. Restricted to Seb and Punky."""
+        if ctx.author.id not in self.authorized:
+            await ctx.send("You are not authorized to update the near TPK count.")
+            return
         self.stats['statistics']["neartpks"] += 1
         with open('stats.json', 'w') as f:
             json.dump(self.stats, f)
