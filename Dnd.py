@@ -36,7 +36,7 @@ class Dnd(Cog):
             msg += "```\n"
             if self.stats["characters"]["alive"]:
                 for character in self.stats["characters"]["alive"]:
-                    msg += f"{character}\n"
+                    msg += f"{character['name']} - {character['class']}\n"
             else:
                 msg += "None\n"
             msg += "```"
@@ -45,7 +45,7 @@ class Dnd(Cog):
             msg += "```\n"
             if self.stats["characters"]["retired"]:
                 for character in self.stats["characters"]["retired"]:
-                    msg += f"{character}\n"
+                    msg += f"{character['name']} - {character['class']}\n"
             else:
                 msg += "None\n"
             msg += "```"
@@ -54,7 +54,7 @@ class Dnd(Cog):
             msg += "```\n"
             if self.stats["characters"]["dead"]:
                 for character in self.stats["characters"]["dead"]:
-                    msg += f"{character}\n"
+                    msg += f"{character['name']} - {character['class']}\n"
             else:
                 msg += "None\n"
             msg += "```"
