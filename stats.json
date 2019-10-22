@@ -2,6 +2,6 @@
   "sessions": 1,
   "next": "2019-10-31 17:30:00"},
   "characters": {
-    "alive": [],
-    "retired": [],
-    "dead": []}}
+    "alive": ["Rularuu"],
+    "retired": ["Maskonk"],
+    "dead": ["Zanorin"]}}
