@@ -7,7 +7,7 @@ class Dnd(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases=["roll", "Roll", "Stats"])
     async def stats(self, ctx):
         """Roll 4d6 dropping lowest for D&D"""
         # TODO: over/below average
