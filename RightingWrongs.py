@@ -3,27 +3,27 @@ from discord.ext import commands
 from datetime import datetime
 import calendar
 import re
+import json
 
 
 class RightingWrongs(Cog):
     def __init__(self, bot, stats):
         self.bot = bot
+        self.stats = stats
         next_date = re.split("\D+", stats["next"])
         self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
                                      int(next_date[4]), int(next_date[5]))
-        self.neartpks = stats["neartpks"]
-        self.sessions = stats["sessions"]
         self.authorized = [167967067222441984, 168009927015661568]
 
     @commands.command(aliases=["tpks"])
     async def neartpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
-        await ctx.send(f"The party has had {self.neartpks} near Total Party Kills so far this campaign.")
+        await ctx.send(f"The party has had {self.stats['neartpks']} near Total Party Kills so far this campaign.")
 
     @commands.command(aliases=["played"])
     async def sessions(self, ctx):
         """Shows the number of sessions played so far this campaign."""
-        await ctx.send(f"The party has had {self.sessions} sessions so far this campaign.")
+        await ctx.send(f"The party has had {self.stats['sessions']} sessions so far this campaign.")
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil"])
     async def worldanvil(self, ctx):
@@ -52,7 +52,7 @@ class RightingWrongs(Cog):
                        f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time. "
                        f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
 
-    @commands.command(aliases=["Update", ])
+    @commands.command(aliases=["Update"])
     async def update(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
         Format dd/mm/yy hh:mm, hour in UK time."""
@@ -70,6 +70,11 @@ class RightingWrongs(Cog):
             time = time.split("h")
 
         self.next_session = datetime(int(date[2]), int(date[1]), int((date[0])), (int(time[0])), int(time[1]), 00)
+
+        self.stats["next"] = str(self.next_session)
+
+        with open('stats.json', 'w') as f:
+            json.dump(self.stats, f)
 
         await ctx.send("Date updated.")
         command = self.bot.get_command("next")
