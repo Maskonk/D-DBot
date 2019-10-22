@@ -74,3 +74,7 @@ class Dnd(Cog):
             return
 
         await ctx.send(f"```Name: {chosen['name']}:\nLevel: {chosen['level']}\nClass: {chosen['class']}```")
+
+    @commands.command()
+    async def add_character(self, ctx, name, level):
+        pass

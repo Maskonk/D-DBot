@@ -19,6 +19,16 @@ async def on_ready():
     print("Online")
 
 
+@client.event
+async def on_command_error(ctx, error):
+    # TODO: Fix this so it catches invalid commands
+    if ctx.author.id == 247328517207883776 or ctx.author.id == 168009927015661568:
+        await ctx.message.delete()
+        await ctx.author.send("No MadRat that is NOT a valid command.")
+    else:
+        await ctx.send("That is not a valid command. Please use *.help* for a list of all commands.")
+
+
 @client.command(aliases=["Suggestions", "Suggest", "suggest", "suggestion", "Suggestion"])
 async def suggestions(ctx):
     """Message pertaining to suggestions for the bot."""
