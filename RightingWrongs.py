@@ -22,7 +22,7 @@ class RightingWrongs(Cog):
 
     @commands.command(aliases=["addtpk"])
     async def addneartpk(self, ctx):
-        """Shows the number of near Total Party Kills so far this campaign."""
+        """Adds one to the near TPK count. Restricted to Seb and Punky."""
         self.stats['statistics']["neartpks"] += 1
         with open('stats.json', 'w') as f:
             json.dump(self.stats, f)
