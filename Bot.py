@@ -11,6 +11,7 @@ with open('stats.json', 'r') as f:
     stats = json.load(f)
 
 client = Bot(command_prefix=bot_prefix)
+admins = [167967067222441984, 168009927015661568]
 
 
 @client.event
@@ -37,6 +38,6 @@ async def github(ctx):
     await ctx.send("The code for this bot is at: https://github.com/Maskonk/DnDBot")
 
 
-client.add_cog(Dnd(client, stats))
-client.add_cog(RightingWrongs(client, stats))
+client.add_cog(Dnd(client, stats, admins))
+client.add_cog(RightingWrongs(client, stats, admins))
 client.run(token)

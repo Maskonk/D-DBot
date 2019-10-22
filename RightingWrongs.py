@@ -7,13 +7,13 @@ import json
 
 
 class RightingWrongs(Cog):
-    def __init__(self, bot, stats):
+    def __init__(self, bot, stats, admins):
         self.bot = bot
         self.stats = stats
         next_date = re.split("\D+", stats["statistics"]["next"])
         self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
                                      int(next_date[4]), int(next_date[5]))
-        self.authorized = [167967067222441984, 168009927015661568]
+        self.authorized = admins
 
     @commands.command(aliases=["tpks"])
     async def neartpks(self, ctx):

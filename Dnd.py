@@ -4,7 +4,7 @@ import random
 
 
 class Dnd(Cog):
-    def __init__(self, bot, stats):
+    def __init__(self, bot, stats, admins):
         self.bot = bot
         self.stats = stats
 
