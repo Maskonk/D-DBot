@@ -2,13 +2,28 @@ from discord.ext.commands import Cog
 from discord.ext import commands
 from datetime import datetime
 import calendar
+import re
 
 
 class RightingWrongs(Cog):
-    def __init__(self, bot):
+    def __init__(self, bot, stats):
         self.bot = bot
-        self.next_session = datetime(2019, 10, 31, 17, 30, 00)
+        next_date = re.split("\D+", stats["next"])
+        self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
+                                     int(next_date[4]), int(next_date[5]))
+        self.neartpks = stats["neartpks"]
+        self.sessions = stats["sessions"]
         self.authorized = [167967067222441984, 168009927015661568]
+
+    @commands.command(aliases=["tpks"])
+    async def neartpks(self, ctx):
+        """Shows the number of near Total Party Kills so far this campaign."""
+        await ctx.send(f"The party has had {self.neartpks} near Total Party Kills so far this campaign.")
+
+    @commands.command(aliases=["played"])
+    async def sessions(self, ctx):
+        """Shows the number of sessions played so far this campaign."""
+        await ctx.send(f"The party has had {self.sessions} sessions so far this campaign.")
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil"])
     async def worldanvil(self, ctx):
