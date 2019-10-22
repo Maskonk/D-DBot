@@ -10,7 +10,7 @@ class RightingWrongs(Cog):
     def __init__(self, bot, stats):
         self.bot = bot
         self.stats = stats
-        next_date = re.split("\D+", stats["next"])
+        next_date = re.split("\D+", stats["statistics"]["next"])
         self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
                                      int(next_date[4]), int(next_date[5]))
         self.authorized = [167967067222441984, 168009927015661568]
@@ -18,12 +18,12 @@ class RightingWrongs(Cog):
     @commands.command(aliases=["tpks"])
     async def neartpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
-        await ctx.send(f"The party has had {self.stats['neartpks']} near Total Party Kills so far this campaign.")
+        await ctx.send(f"The party has had {self.stats['statistics']['neartpks']} near Total Party Kills so far this campaign.")
 
     @commands.command(aliases=["played"])
     async def sessions(self, ctx):
         """Shows the number of sessions played so far this campaign."""
-        await ctx.send(f"The party has had {self.stats['sessions']} sessions so far this campaign.")
+        await ctx.send(f"The party has had {self.stats['statistics']['sessions']} sessions so far this campaign.")
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil"])
     async def worldanvil(self, ctx):
@@ -71,7 +71,7 @@ class RightingWrongs(Cog):
 
         self.next_session = datetime(int(date[2]), int(date[1]), int((date[0])), (int(time[0])), int(time[1]), 00)
 
-        self.stats["next"] = str(self.next_session)
+        self.stats['statistics']["next"] = str(self.next_session)
 
         with open('stats.json', 'w') as f:
             json.dump(self.stats, f)
