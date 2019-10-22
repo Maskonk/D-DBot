@@ -32,7 +32,7 @@ class Dnd(Cog):
         status = status.lower()
         msg = "The current characters I have registered are:\n"
         if status == "alive" or status == "all":
-            msg += "\nAlive:\n"
+            msg += f"\nAlive - {len(self.stats['characters']['alive'])}:\n"
             msg += "```\n"
             if self.stats["characters"]["alive"]:
                 for character in self.stats["characters"]["alive"]:
@@ -41,7 +41,7 @@ class Dnd(Cog):
                 msg += "None\n"
             msg += "```"
         if status == "retired" or status == "all":
-            msg += "\nRetired:\n"
+            msg += f"\nRetired - {len(self.stats['characters']['retired'])}:\n"
             msg += "```\n"
             if self.stats["characters"]["retired"]:
                 for character in self.stats["characters"]["retired"]:
@@ -50,7 +50,7 @@ class Dnd(Cog):
                 msg += "None\n"
             msg += "```"
         if status == "dead" or status == "all":
-            msg += "\nDead:\n"
+            msg += f"\nDead - {len(self.stats['characters']['dead'])}:\n"
             msg += "```\n"
             if self.stats["characters"]["dead"]:
                 for character in self.stats["characters"]["dead"]:
