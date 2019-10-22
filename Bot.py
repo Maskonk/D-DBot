@@ -21,8 +21,7 @@ async def on_ready():
 
 @client.event
 async def on_command_error(ctx, error):
-    # TODO: Fix this so it catches invalid commands
-    if ctx.author.id == 247328517207883776 or ctx.author.id == 168009927015661568:
+    if ctx.author.id == 247328517207883776:
         await ctx.message.delete()
         await ctx.author.send("No MadRat that is NOT a valid command.")
     else:
