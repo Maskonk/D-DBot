@@ -15,13 +15,14 @@ class RightingWrongs(Cog):
                                      int(next_date[4]), int(next_date[5]))
         self.authorized = admins
 
-    @commands.command(aliases=["tpks"])
+    @commands.group(name="neartpks", aliases=["tpks"])
     async def neartpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
-        await ctx.send(f"The party has had {self.stats['statistics']['neartpks']} near Total Party Kills so far this campaign.")
+        if ctx.invoked_subcommand is None:
+            await ctx.send(f"The party has had {self.stats['statistics']['neartpks']} near Total Party Kills so far this campaign.")
 
-    @commands.command(aliases=["addtpk", "updatetpks", "addneartpk", "addNearTpk"])
-    async def add_near_tpk(self, ctx):
+    @neartpks.command(name="update")
+    async def add_tpk(self, ctx):
         """Adds one to the near TPK count. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to update the near TPK count.")
@@ -33,13 +34,14 @@ class RightingWrongs(Cog):
         command = self.bot.get_command("neartpks")
         await ctx.invoke(command)
 
-    @commands.command(aliases=["played"])
+    @commands.group(name="sessions", aliases=["played"])
     async def sessions(self, ctx):
         """Shows the number of sessions played so far this campaign."""
-        await ctx.send(f"The party has had {self.stats['statistics']['sessions']} sessions so far this campaign.")
+        if ctx.invoked_subcommand is None:
+            await ctx.send(f"The party has had {self.stats['statistics']['sessions']} sessions so far this campaign.")
 
-    @commands.command(aliases=["updatesessions", "addsession", "addSession"])
-    async def add_session(self, ctx):
+    @sessions.command(name="update")
+    async def update_session(self, ctx):
         """Adds one to the session count. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to update the session count.")
@@ -80,7 +82,7 @@ class RightingWrongs(Cog):
                            f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
 
     @next.command(name='update')
-    async def update(self, ctx, date, time="17:30"):
+    async def update_next_session(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
                 Format dd/mm/yy hh:mm, hour in UK time."""
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
