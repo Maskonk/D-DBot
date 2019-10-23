@@ -62,22 +62,23 @@ class Dnd(Cog):
             msg += "```"
         await ctx.send(msg)
 
-    @commands.command()
-    async def character(self, ctx, name):
+    @commands.group(name="character")
+    async def character(self, ctx):
         """Shows detailed info for a given character name."""
-        characters = self.stats["characters"]["alive"] + self.stats["characters"]["retired"] + \
-            self.stats["characters"]["dead"]
-        chosen = None
-        for character in characters:
-            if character["name"] == name:
-                chosen = character
-        if not chosen:
-            await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
-            return
+        if ctx.invoked_subcommand is None:
+            characters = self.stats["characters"]["alive"] + self.stats["characters"]["retired"] + \
+                self.stats["characters"]["dead"]
+            chosen = None
+            for character in characters:
+                if character["name"] == ctx.subcommand_passed:
+                    chosen = character
+            if not chosen:
+                await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
+                return
 
-        await ctx.send(f"```Name: {chosen['name']}:\nLevel: {chosen['level']}\nClass: {chosen['class']}```")
+            await ctx.send(f"```Name: {chosen['name']}:\nLevel: {chosen['level']}\nClass: {chosen['class']}```")
 
-    @commands.command()
+    @character.command(name="add")
     async def add_character(self, ctx, name, level, dclass):
         """Add a class to the list. Assumes the character starts alive."""
         character = {"name": name, "level": level, "class": dclass}
