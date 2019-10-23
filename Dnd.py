@@ -1,6 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
 import random
+import json
 
 
 class Dnd(Cog):
@@ -76,5 +77,10 @@ class Dnd(Cog):
         await ctx.send(f"```Name: {chosen['name']}:\nLevel: {chosen['level']}\nClass: {chosen['class']}```")
 
     @commands.command()
-    async def add_character(self, ctx, name, level):
-        pass
+    async def add_character(self, ctx, name, level, dclass):
+        """Add a class to the list. Assumes the character starts alive."""
+        character = {"name": name, "level": level, "class": dclass}
+        self.stats["characters"]["alive"].append(character)
+        with open('stats.json', 'w') as f:
+            json.dump(self.stats, f)
+        await ctx.send("Character has been added. Use .character <name> to see it.")
