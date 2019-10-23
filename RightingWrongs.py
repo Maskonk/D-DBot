@@ -62,26 +62,29 @@ class RightingWrongs(Cog):
         await ctx.send("The link to the calender page is:"
                        "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
 
-    @commands.command(aliases=["nextsession", "Next", "next_session"])
+    @commands.group(name="next", aliases=["Next"])
     async def next(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
-        date_difference = self.next_session - datetime.now()
-        days = divmod(date_difference.total_seconds(), 86400)
-        hours = divmod(days[1], 3600)
-        minutes = divmod(hours[1], 60)
-        seconds = divmod(minutes[1], 1)
-        await ctx.send(f"The next session of Righting Wrongs will be on "
-                       f"{calendar.day_name[self.next_session.weekday()]} "
-                       f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of "
-                       f"{calendar.month_name[self.next_session.month]}, "
-                       f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
-                       f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time. "
-                       f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
+        if ctx.invoked_subcommand is None:
+            date_difference = self.next_session - datetime.now()
+            days = divmod(date_difference.total_seconds(), 86400)
+            hours = divmod(days[1], 3600)
+            minutes = divmod(hours[1], 60)
+            seconds = divmod(minutes[1], 1)
+            await ctx.send(f"The next session of Righting Wrongs will be on "
+                           f"{calendar.day_name[self.next_session.weekday()]} "
+                           f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of "
+                           f"{calendar.month_name[self.next_session.month]}, "
+                           f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
+                           f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time. "
+                           f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
 
-    @commands.command(aliases=["Update"])
+    @next.command(name='update')
     async def update(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
-        Format dd/mm/yy hh:mm, hour in UK time."""
+                Format dd/mm/yy hh:mm, hour in UK time."""
+        """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
+                Format dd/mm/yy hh:mm, hour in UK time."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to update the session date.")
             return
