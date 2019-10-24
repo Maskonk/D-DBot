@@ -41,11 +41,10 @@ class Dnd(Cog):
                          "from characters join status on characters.status = status.id order by characters.status, "
                          "characters.name")
             characters = conn.fetchall()
-            await ctx.send(characters)
         except Exception as e:
             print(e)
-            await ctx.send("An error has occurred with this command, please make sure the status you are entering is "
-                           "valid and  try again. If this error persists please report it to Punky.")
+            await ctx.send("An error has occurred with this command, please try again. "
+                           "If this error persists please report it to Punky.")
         finally:
             if db:
                 db.close()
