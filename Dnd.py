@@ -37,27 +37,14 @@ class Dnd(Cog):
         if status not in valid:
             await ctx.send("That is not a valid status, Please use alive, retired, dead or all.")
             return
-        
-        try:
-            db = sqlite3.connect('dnd.db')
-            conn = db.cursor()
-            conn.execute("select characters.name, characters.level, characters.class, status.status "
-                         "from characters join status on characters.status = status.id order by characters.status, "
-                         "characters.name")
-            characters = conn.fetchall()
-        except Exception as e:
-            print(e)
-            await ctx.send("An error has occurred with this command, please try again. "
-                           "If this error persists please report it to Punky.")
-        finally:
-            if db:
-                db.close()
+
+        characters = await self.db_call(ctx, "select characters.name, characters.level, characters.class, status.status"
+                                       " from characters join status on characters.status = status.id "
+                                       "order by characters.status, characters.name")
 
         alive = list(filter(lambda character: character[3] == "alive", characters))
         retired = list(filter(lambda character: character[3] == "retired", characters))
         dead = list(filter(lambda character: character[3] == "dead", characters))
-
-
 
         msg = "The current characters I have registered are:\n"
         if status == "alive" or status == "all":
@@ -113,3 +100,17 @@ class Dnd(Cog):
         with open('stats.json', 'w') as f:
             json.dump(self.stats, f)
         await ctx.send("Character has been added. Use .character <name> to see it.")
+
+    async def db_call(self, ctx, sql):
+        try:
+            db = sqlite3.connect('dnd.db')
+            conn = db.cursor()
+            conn.execute(sql)
+            return conn.fetchall()
+        except Exception as e:
+            print(e)
+            await ctx.send("An error has occurred with this command, please try again. "
+                           "If this error persists please report it to Punky.")
+        finally:
+            if db:
+                db.close()
