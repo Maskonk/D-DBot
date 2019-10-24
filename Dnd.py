@@ -2,6 +2,7 @@ from discord.ext.commands import Cog
 from discord.ext import commands
 import random
 import json
+import sqlite3
 
 
 class Dnd(Cog):
@@ -32,31 +33,52 @@ class Dnd(Cog):
         """Lists all characters registered. Can optionally give a status [alive|retired|dead]
         to see only those characters."""
         status = status.lower()
+
+        try:
+            db = sqlite3.connect('dnd.db')
+            conn = db.cursor()
+            conn.execute("select characters.name, characters.level, characters.class, status.status "
+                         "from characters join status on characters.status = status.id order by characters.status, "
+                         "characters.name")
+            characters = conn.fetchall()
+            await ctx.send(characters)
+        except Exception as e:
+            print(e)
+            await ctx.send("An error has occurred with this command, please make sure the status you are entering is "
+                           "valid and  try again. If this error persists please report it to Punky.")
+        finally:
+            if db:
+                db.close()
+
+        alive = list(filter(lambda character: character[3] == "alive", characters))
+        retired = list(filter(lambda character: character[3] == "retired", characters))
+        dead = list(filter(lambda character: character[3] == "dead", characters))
+
         msg = "The current characters I have registered are:\n"
         if status == "alive" or status == "all":
-            msg += f"\nAlive - {len(self.stats['characters']['alive'])}:\n"
+            msg += f"\nAlive - {len(alive)}:\n"
             msg += "```\n"
-            if self.stats["characters"]["alive"]:
-                for character in self.stats["characters"]["alive"]:
-                    msg += f"{character['name']} - {character['class']}\n"
+            if alive:
+                for character in alive:
+                    msg += f"{character[0]} - {character[2]}\n"
             else:
                 msg += "None\n"
             msg += "```"
         if status == "retired" or status == "all":
-            msg += f"\nRetired - {len(self.stats['characters']['retired'])}:\n"
+            msg += f"\nRetired - {len(retired)}:\n"
             msg += "```\n"
-            if self.stats["characters"]["retired"]:
-                for character in self.stats["characters"]["retired"]:
-                    msg += f"{character['name']} - {character['class']}\n"
+            if retired:
+                for character in retired:
+                    msg += f"{character[0]} - {character[2]}\n"
             else:
                 msg += "None\n"
             msg += "```"
         if status == "dead" or status == "all":
-            msg += f"\nDead - {len(self.stats['characters']['dead'])}:\n"
+            msg += f"\nDead - {len(dead)}:\n"
             msg += "```\n"
-            if self.stats["characters"]["dead"]:
-                for character in self.stats["characters"]["dead"]:
-                    msg += f"{character['name']} - {character['class']}\n"
+            if dead:
+                for character in dead:
+                    msg += f"{character[0]} - {character[2]}\n"
             else:
                 msg += "None\n"
             msg += "```"
