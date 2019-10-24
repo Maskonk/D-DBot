@@ -33,7 +33,11 @@ class Dnd(Cog):
         """Lists all characters registered. Can optionally give a status [alive|retired|dead]
         to see only those characters."""
         status = status.lower()
-
+        valid = ["alive", "retired", "dead", "all"]
+        if status not in valid:
+            await ctx.send("That is not a valid status, Please use alive, retired, dead or all.")
+            return
+        
         try:
             db = sqlite3.connect('dnd.db')
             conn = db.cursor()
@@ -52,6 +56,8 @@ class Dnd(Cog):
         alive = list(filter(lambda character: character[3] == "alive", characters))
         retired = list(filter(lambda character: character[3] == "retired", characters))
         dead = list(filter(lambda character: character[3] == "dead", characters))
+
+
 
         msg = "The current characters I have registered are:\n"
         if status == "alive" or status == "all":
