@@ -89,17 +89,15 @@ class Dnd(Cog):
                 character = character[0]
                 owner = self.bot.get_user(character[3])
                 await ctx.send(f"```Name: {character[0]}:\nLevel: {character[1]}\nClass: {character[2]}"
-                               f"\nStatus: {character[4].capitalize()}\nOwner: {owner.name}```")
+                               f"\nStatus: {character[4].capitalize()}\nOwner: {owner.display_name}```")
             else:
                 await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
 
     @character.command(name="add")
     async def add_character(self, ctx, name, level, dclass):
         """Add a class to the list. Assumes the character starts alive."""
-        character = {"name": name, "level": level, "class": dclass}
-        self.stats["characters"]["alive"].append(character)
-        with open('stats.json', 'w') as f:
-            json.dump(self.stats, f)
+        character = [name, level, dclass, ctx.author.id, 1]
+        await self.db_call(ctx, "insert into characters (name, level, class, owner, status) values (?,?,?,?,?)", character)
         await ctx.send("Character has been added. Use .character <name> to see it.")
 
     async def db_call(self, ctx, sql, filtered=[]):
@@ -107,6 +105,7 @@ class Dnd(Cog):
             db = sqlite3.connect('dnd.db')
             conn = db.cursor()
             conn.execute(sql, filtered)
+            db.commit()
             return conn.fetchall()
         except Exception as e:
             print(e)
