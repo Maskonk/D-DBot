@@ -1,8 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
-import random
-import json
-import sqlite3
+from random import randint
+from sqlite3 import connect
 
 
 class Dnd(Cog):
@@ -20,7 +19,7 @@ class Dnd(Cog):
         for x in range(6):
             stat = []
             for y in range(4):
-                num = random.randint(1, 6)
+                num = randint(1, 6)
                 stat.append(num)
             message += f"{stat[0]} + {stat[1]} + {stat[2]} + {stat[3]} - **{sum(stat) - min(stat)}**\n"
             full_stats.append(sum(stat) - min(stat))
@@ -102,7 +101,7 @@ class Dnd(Cog):
 
     async def db_call(self, ctx, sql, filtered=[]):
         try:
-            db = sqlite3.connect('dnd.db')
+            db = connect('dnd.db')
             conn = db.cursor()
             conn.execute(sql, filtered)
             db.commit()

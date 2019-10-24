@@ -1,16 +1,16 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
 from datetime import datetime
-import calendar
-import re
-import json
+from calendar import month_name, day_name
+from re import split
+from json import dump
 
 
 class RightingWrongs(Cog):
     def __init__(self, bot, stats, admins):
         self.bot = bot
         self.stats = stats
-        next_date = re.split("\D+", stats["statistics"]["next"])
+        next_date = split("\D+", stats["statistics"]["next"])
         self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
                                      int(next_date[4]), int(next_date[5]))
         self.authorized = admins
@@ -29,7 +29,7 @@ class RightingWrongs(Cog):
             return
         self.stats['statistics']["neartpks"] += 1
         with open('stats.json', 'w') as f:
-            json.dump(self.stats, f)
+            dump(self.stats, f)
         await ctx.send("Near Total Party Kills updated.")
         command = self.bot.get_command("neartpks")
         await ctx.invoke(command)
@@ -48,7 +48,7 @@ class RightingWrongs(Cog):
             return
         self.stats['statistics']["sessions"] += 1
         with open('stats.json', 'w') as f:
-            json.dump(self.stats, f)
+            dump(self.stats, f)
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
         await ctx.invoke(command)
@@ -74,9 +74,9 @@ class RightingWrongs(Cog):
             minutes = divmod(hours[1], 60)
             seconds = divmod(minutes[1], 1)
             await ctx.send(f"The next session of Righting Wrongs will be on "
-                           f"{calendar.day_name[self.next_session.weekday()]} "
+                           f"{day_name[self.next_session.weekday()]} "
                            f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of "
-                           f"{calendar.month_name[self.next_session.month]}, "
+                           f"{month_name[self.next_session.month]}, "
                            f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
                            f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time. "
                            f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
@@ -105,7 +105,7 @@ class RightingWrongs(Cog):
         self.stats['statistics']["next"] = str(self.next_session)
 
         with open('stats.json', 'w') as f:
-            json.dump(self.stats, f)
+            dump(self.stats, f)
 
         await ctx.send("Date updated.")
         command = self.bot.get_command("next")

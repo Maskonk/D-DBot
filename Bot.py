@@ -1,14 +1,14 @@
 from discord.ext.commands import Bot
 from RightingWrongs import RightingWrongs
 from Dnd import Dnd
-import json
+from json import load
 
 bot_prefix = "."
 with open('token.txt', 'r') as f:
     token = f.read()
 
 with open('stats.json', 'r') as f:
-    stats = json.load(f)
+    stats = load(f)
 
 client = Bot(command_prefix=bot_prefix)
 admins = [167967067222441984, 168009927015661568]
