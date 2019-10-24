@@ -1,4 +1,5 @@
 from discord.ext.commands import Bot
+from discord import Game
 from RightingWrongs import RightingWrongs
 from Dnd import Dnd
 from json import load
@@ -16,6 +17,7 @@ admins = [167967067222441984, 168009927015661568]
 
 @client.event
 async def on_ready():
+    await client.change_presence(activity=Game(name='D&D'))
     print("Online")
 
 
