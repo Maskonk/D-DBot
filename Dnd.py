@@ -80,17 +80,18 @@ class Dnd(Cog):
     async def character(self, ctx):
         """Shows detailed info for a given character name."""
         if ctx.invoked_subcommand is None:
-            characters = self.stats["characters"]["alive"] + self.stats["characters"]["retired"] + \
-                self.stats["characters"]["dead"]
-            chosen = None
-            for character in characters:
-                if character["name"] == ctx.subcommand_passed:
-                    chosen = character
-            if not chosen:
-                await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
-                return
 
-            await ctx.send(f"```Name: {chosen['name']}:\nLevel: {chosen['level']}\nClass: {chosen['class']}```")
+            character = await self.db_call(ctx, "select characters.name, characters.level, characters.class, "
+                                                "characters.owner, status.status from characters "
+                                                "join status on status.id = characters.status where name=?",
+                                                [ctx.subcommand_passed])
+            if character:
+                character = character[0]
+                owner = self.bot.get_user(character[3])
+                await ctx.send(f"```Name: {character[0]}:\nLevel: {character[1]}\nClass: {character[2]}"
+                               f"\nStatus: {character[4].capitalize()}\nOwner: {owner.name}```")
+            else:
+                await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
 
     @character.command(name="add")
     async def add_character(self, ctx, name, level, dclass):
@@ -101,11 +102,11 @@ class Dnd(Cog):
             json.dump(self.stats, f)
         await ctx.send("Character has been added. Use .character <name> to see it.")
 
-    async def db_call(self, ctx, sql):
+    async def db_call(self, ctx, sql, filtered=[]):
         try:
             db = sqlite3.connect('dnd.db')
             conn = db.cursor()
-            conn.execute(sql)
+            conn.execute(sql, filtered)
             return conn.fetchall()
         except Exception as e:
             print(e)
