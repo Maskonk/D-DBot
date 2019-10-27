@@ -23,15 +23,13 @@ class RightingWrongs(Cog):
             count = await db_call(ctx, "select count(*) from near_tpks")
             await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
-    @neartpks.command(name="ad")
+    @neartpks.command(name="add")
     async def add_tpk(self, ctx, session_no, notes=""):
         """Adds a near TPK to the database"""
         if ctx.author.id not in self.authorized:
-            await ctx.send("You are not authorized to update the near TPK count.")
+            await ctx.send("You are not authorized to add to the near TPK count.")
             return
-        self.stats['statistics']["neartpks"] += 1
-        with open('stats.json', 'w') as f:
-            dump(self.stats, f)
+        await db_call(ctx, "insert into near_tpks (session_id, notes) values (?, ?)", [session_no, notes])
         await ctx.send("Near Total Party Kills updated.")
         command = self.bot.get_command("neartpks")
         await ctx.invoke(command)
