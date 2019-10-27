@@ -25,7 +25,7 @@ class RightingWrongs(Cog):
 
     @neartpks.command(name="add")
     async def add_tpk(self, ctx, session_no, notes=""):
-        """Adds a near TPK to the database"""
+        """Adds a near TPK to the database. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to add to the near TPK count.")
             return
@@ -41,15 +41,13 @@ class RightingWrongs(Cog):
             count = await db_call(ctx, "select count(*) from sessions")
             await ctx.send(f"The party has had {count[0][0]} sessions so far this campaign.")
 
-    @sessions.command(name="update")
-    async def add_session(self, ctx):
-        """Adds one to the session count. Restricted to Seb and Punky."""
+    @sessions.command(name="add")
+    async def add_session(self, ctx, date=datetime.today().date(), notes=""):
+        """Adds a session to the database. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to add to the session count.")
             return
-        self.stats['statistics']["sessions"] += 1
-        with open('stats.json', 'w') as f:
-            dump(self.stats, f)
+        await db_call(ctx, "insert into sessions (date, notes) values (?, ?)", [date, notes])
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
         await ctx.invoke(command)
