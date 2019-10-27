@@ -4,6 +4,7 @@ from datetime import datetime
 from calendar import month_name, day_name
 from re import split
 from json import dump
+from util import db_call
 
 
 class RightingWrongs(Cog):
@@ -19,11 +20,12 @@ class RightingWrongs(Cog):
     async def neartpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
         if ctx.invoked_subcommand is None:
-            await ctx.send(f"The party has had {self.stats['statistics']['neartpks']} near Total Party Kills so far this campaign.")
+            count = await db_call(ctx, "select count(*) from near_tpks")
+            await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
-    @neartpks.command(name="update")
-    async def add_tpk(self, ctx):
-        """Adds one to the near TPK count. Restricted to Seb and Punky."""
+    @neartpks.command(name="ad")
+    async def add_tpk(self, ctx, session_no, notes=""):
+        """Adds a near TPK to the database"""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to update the near TPK count.")
             return
