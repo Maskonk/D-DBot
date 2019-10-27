@@ -38,13 +38,14 @@ class RightingWrongs(Cog):
     async def sessions(self, ctx):
         """Shows the number of sessions played so far this campaign."""
         if ctx.invoked_subcommand is None:
-            await ctx.send(f"The party has had {self.stats['statistics']['sessions']} sessions so far this campaign.")
+            count = await db_call(ctx, "select count(*) from sessions")
+            await ctx.send(f"The party has had {count[0][0]} sessions so far this campaign.")
 
     @sessions.command(name="update")
-    async def update_session(self, ctx):
+    async def add_session(self, ctx):
         """Adds one to the session count. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
-            await ctx.send("You are not authorized to update the session count.")
+            await ctx.send("You are not authorized to add to the session count.")
             return
         self.stats['statistics']["sessions"] += 1
         with open('stats.json', 'w') as f:
