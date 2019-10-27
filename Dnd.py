@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
 from random import randint
-from sqlite3 import connect
+from util import db_call
 
 
 class Dnd(Cog):
@@ -37,7 +37,7 @@ class Dnd(Cog):
             await ctx.send("That is not a valid status, Please use alive, retired, dead or all.")
             return
 
-        characters = await self.db_call(ctx, "select characters.name, characters.level, characters.class, status.status"
+        characters = await db_call(ctx, "select characters.name, characters.level, characters.class, status.status"
                                        " from characters join status on characters.status = status.id "
                                        "order by characters.status, characters.name")
 
@@ -80,7 +80,7 @@ class Dnd(Cog):
         """Shows detailed info for a given character name."""
         if ctx.invoked_subcommand is None:
 
-            character = await self.db_call(ctx, "select characters.name, characters.level, characters.class, "
+            character = await db_call(ctx, "select characters.name, characters.level, characters.class, "
                                                 "characters.owner, status.status from characters "
                                                 "join status on status.id = characters.status where name=?",
                                                 [ctx.subcommand_passed])
@@ -96,20 +96,20 @@ class Dnd(Cog):
     async def add_character(self, ctx, name, level, dclass):
         """Add a class to the list. Assumes the character starts alive."""
         character = [name, level, dclass, ctx.author.id, 1]
-        await self.db_call(ctx, "insert into characters (name, level, class, owner, status) values (?,?,?,?,?)", character)
+        await db_call(ctx, "insert into characters (name, level, class, owner, status) values (?,?,?,?,?)", character)
         await ctx.send("Character has been added. Use .character <name> to see it.")
 
-    async def db_call(self, ctx, sql, filtered=[]):
-        try:
-            db = connect('dnd.db')
-            conn = db.cursor()
-            conn.execute(sql, filtered)
-            db.commit()
-            return conn.fetchall()
-        except Exception as e:
-            print(e)
-            await ctx.send("An error has occurred with this command, please try again. "
-                           "If this error persists please report it to Punky.")
-        finally:
-            if db:
-                db.close()
+    # async def db_call(self, ctx, sql, filtered=[]):
+    #     try:
+    #         db = connect('dnd.db')
+    #         conn = db.cursor()
+    #         conn.execute(sql, filtered)
+    #         db.commit()
+    #         return conn.fetchall()
+    #     except Exception as e:
+    #         print(e)
+    #         await ctx.send("An error has occurred with this command, please try again. "
+    #                        "If this error persists please report it to Punky.")
+    #     finally:
+    #         if db:
+    #             db.close()
