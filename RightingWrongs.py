@@ -34,6 +34,13 @@ class RightingWrongs(Cog):
         command = self.bot.get_command("neartpks")
         await ctx.invoke(command)
 
+    @commands.command(aliases=["tpk"])
+    async def near_tpk(self, ctx, tpk_no):
+        """Lists the information for a given TPK."""
+        info = await db_call(ctx, "select session_id, notes from near_tpks where id=?", [tpk_no])
+        await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
+                       f"\nNotes from the near TPK: {info[0][1]}```")
+
     @commands.group(name="sessions", aliases=["played"])
     async def sessions(self, ctx):
         """Shows the number of sessions played so far this campaign."""
@@ -51,6 +58,11 @@ class RightingWrongs(Cog):
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
         await ctx.invoke(command)
+
+    @commands.command(aliases=[])
+    async def session(self, ctx, session_no):
+        info = await db_call(ctx, "select date, notes from sessions where id=?", [session_no])
+        await ctx.send(f"```Session number {session_no} happened on {info[0][0]}.\nNotes from the session:\n{info[0][1]}```")
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil", "worldanvil"])
     async def world_anvil(self, ctx):
