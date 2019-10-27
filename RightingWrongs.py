@@ -84,8 +84,6 @@ class RightingWrongs(Cog):
     async def update_next_session(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
                 Format dd/mm/yy hh:mm, hour in UK time."""
-        """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
-                Format dd/mm/yy hh:mm, hour in UK time."""
         if ctx.author.id not in self.authorized:
             await ctx.send("You are not authorized to update the session date.")
             return
