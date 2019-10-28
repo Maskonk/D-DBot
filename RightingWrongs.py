@@ -4,7 +4,7 @@ from datetime import datetime
 from calendar import month_name, day_name
 from re import split
 from json import dump
-from util import db_call
+from util import db_call, is_authorized
 
 
 class RightingWrongs(Cog):
@@ -32,11 +32,9 @@ class RightingWrongs(Cog):
                            f"\nNotes from the near TPK: {info[0][1]}```")
 
     @near_tpk.command(name="add")
+    @commands.check(is_authorized)
     async def add_tpk(self, ctx, session_no, notes=""):
         """Adds a near TPK to the database. Restricted to Seb and Punky."""
-        if ctx.author.id not in self.authorized:
-            await ctx.send("You are not authorized to add to the near TPK count.")
-            return
         await db_call(ctx, "insert into near_tpks (session_id, notes) values (?, ?)", [session_no, notes])
         await ctx.send("Near Total Party Kills updated.")
         command = self.bot.get_command("neartpks")
@@ -57,11 +55,9 @@ class RightingWrongs(Cog):
                            f"\nNotes from the session:\n{info[0][1]}```")
 
     @session.command(name="add")
+    @commands.check(is_authorized)
     async def add_session(self, ctx, date=datetime.today().date(), notes=""):
         """Adds a session to the database. Restricted to Seb and Punky."""
-        if ctx.author.id not in self.authorized:
-            await ctx.send("You are not authorized to add to the session count.")
-            return
         await db_call(ctx, "insert into sessions (date, notes) values (?, ?)", [date, notes])
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
@@ -96,12 +92,10 @@ class RightingWrongs(Cog):
                            f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
 
     @next.command(name='update')
+    @commands.check(is_authorized)
     async def update_next_session(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
                 Format dd/mm/yy hh:mm, hour in UK time."""
-        if ctx.author.id not in self.authorized:
-            await ctx.send("You are not authorized to update the session date.")
-            return
 
         date = date.split("/")
         if int(date[2]) < 100:

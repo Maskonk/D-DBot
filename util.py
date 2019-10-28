@@ -17,5 +17,6 @@ async def db_call(ctx, sql, filtered=[]):
             db.close()
 
 
-async def is_authorized(ctx, admins):
+async def is_authorized(ctx):
+    admins = [167967067222441984, 168009927015661568]
     return ctx.author.id in admins
