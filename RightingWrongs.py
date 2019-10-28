@@ -27,8 +27,12 @@ class RightingWrongs(Cog):
         """Lists the information for a given TPK."""
         if ctx.invoked_subcommand is None:
             info = await db_call(ctx, "select session_id, notes from near_tpks where id=?", [ctx.subcommand_passed])
-            await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
-                           f"\nNotes from the near TPK: {info[0][1]}```")
+            if info:
+                await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
+                               f"\nNotes from the near TPK: {info[0][1]}```")
+            else:
+                count = await db_call(ctx, "select count(*) from near_tpks")
+                await ctx.send(f"No tpk with that number found, please try a number between 1 and {count[0][0]}")
 
     @near_tpk.command(name="add")
     @commands.check(is_authorized)
