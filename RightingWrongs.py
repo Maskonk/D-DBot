@@ -82,6 +82,7 @@ class RightingWrongs(Cog):
             hours = divmod(days[1], 3600)
             minutes = divmod(hours[1], 60)
             seconds = divmod(minutes[1], 1)
+            print(ctx.author.nick)
             await ctx.send(f"The next session of Righting Wrongs will be on "
                            f"{day_name[self.next_session.weekday()]} "
                            f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of "

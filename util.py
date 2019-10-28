@@ -1,7 +1,8 @@
 from sqlite3 import connect
 
 
-async def db_call(ctx, sql, filtered=[]):
+async def db_call(ctx, sql, filtered=()):
+    db = None
     try:
         db = connect('dnd.db')
         conn = db.cursor()
