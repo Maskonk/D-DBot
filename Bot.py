@@ -1,5 +1,6 @@
 from discord.ext.commands import Bot
 from discord import Game
+from discord.ext import commands
 from RightingWrongs import RightingWrongs
 from Dnd import Dnd
 from json import load
@@ -23,11 +24,14 @@ async def on_ready():
 @client.event
 async def on_command_error(ctx, error):
     print(error)
-    if ctx.author.id == 247328517207883776:
-        await ctx.message.delete()
-        await ctx.author.send("No MadRat that is NOT a valid command.")
-    else:
-        await ctx.send("That is not a valid command. Please use *.help* for a list of all commands.")
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send("You are not authorized to use this command. This command is restricted to Seb and Punky only.")
+    elif isinstance(error, commands.CommandNotFound):
+        if ctx.author.id == 247328517207883776:
+            await ctx.message.delete()
+            await ctx.author.send("No MadRat that is NOT a valid command.")
+        else:
+            await ctx.send("That is not a valid command. Please use *.help* for a list of all commands.")
 
 
 @client.command(aliases=["Suggestions", "Suggest", "suggest", "suggestion", "Suggestion"])

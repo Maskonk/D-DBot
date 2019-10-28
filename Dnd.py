@@ -37,8 +37,8 @@ class Dnd(Cog):
             return
 
         characters = await db_call(ctx, "select characters.name, characters.level, characters.class, status.status"
-                                       " from characters join status on characters.status = status.id "
-                                       "order by characters.status, characters.name")
+                                        " from characters join status on characters.status = status.id "
+                                        "order by characters.status, characters.name")
 
         alive = list(filter(lambda character: character[3] == "alive", characters))
         retired = list(filter(lambda character: character[3] == "retired", characters))
