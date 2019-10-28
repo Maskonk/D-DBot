@@ -16,7 +16,7 @@ class RightingWrongs(Cog):
                                      int(next_date[4]), int(next_date[5]))
 
     @commands.command(name="neartpks", aliases=["tpks"])
-    async def neartpks(self, ctx):
+    async def near_tpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
         if ctx.invoked_subcommand is None:
             count = await db_call(ctx, "select count(*) from near_tpks")
