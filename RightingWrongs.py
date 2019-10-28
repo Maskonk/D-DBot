@@ -26,9 +26,11 @@ class RightingWrongs(Cog):
     async def near_tpk(self, ctx):
         """Lists the information for a given TPK."""
         if ctx.invoked_subcommand is None:
-            info = await db_call(ctx, "select session_id, notes from near_tpks where id=?", [ctx.subcommand_passed])
+            info = await db_call(ctx, "select near_tpks.session_id, near_tpks.notes, sessions.date from near_tpks "
+                                      "join sessions on near_tpks.session_id = sessions.id where near_tpks.id=?",
+                                      [ctx.subcommand_passed])
             if info:
-                await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
+                await ctx.send(f"```The near TPK happened on {info[0][2]} in session number {info[0][0]}."
                                f"\nNotes from the near TPK:\n{info[0][1]}```")
             else:
                 count = await db_call(ctx, "select count(*) from near_tpks")
