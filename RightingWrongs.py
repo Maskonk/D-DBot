@@ -16,14 +16,22 @@ class RightingWrongs(Cog):
                                      int(next_date[4]), int(next_date[5]))
         self.authorized = admins
 
-    @commands.group(name="neartpks", aliases=["tpks"])
+    @commands.command(name="neartpks", aliases=["tpks"])
     async def neartpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
         if ctx.invoked_subcommand is None:
             count = await db_call(ctx, "select count(*) from near_tpks")
             await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
-    @neartpks.command(name="add")
+    @commands.group(name="near_tpk", aliases=["tpk"])
+    async def near_tpk(self, ctx):
+        """Lists the information for a given TPK."""
+        if ctx.invoked_subcommand is None:
+            info = await db_call(ctx, "select session_id, notes from near_tpks where id=?", [ctx.subcommand_passed])
+            await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
+                           f"\nNotes from the near TPK: {info[0][1]}```")
+
+    @near_tpk.command(name="add")
     async def add_tpk(self, ctx, session_no, notes=""):
         """Adds a near TPK to the database. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
@@ -34,21 +42,21 @@ class RightingWrongs(Cog):
         command = self.bot.get_command("neartpks")
         await ctx.invoke(command)
 
-    @commands.command(aliases=["tpk"])
-    async def near_tpk(self, ctx, tpk_no):
-        """Lists the information for a given TPK."""
-        info = await db_call(ctx, "select session_id, notes from near_tpks where id=?", [tpk_no])
-        await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
-                       f"\nNotes from the near TPK: {info[0][1]}```")
-
-    @commands.group(name="sessions", aliases=["played"])
+    @commands.command(name="sessions", aliases=["played"])
     async def sessions(self, ctx):
         """Shows the number of sessions played so far this campaign."""
         if ctx.invoked_subcommand is None:
             count = await db_call(ctx, "select count(*) from sessions")
             await ctx.send(f"The party has had {count[0][0]} sessions so far this campaign.")
 
-    @sessions.command(name="add")
+    @commands.group(name="session", aliases=[])
+    async def session(self, ctx):
+        if ctx.invoked_subcommand is None:
+            info = await db_call(ctx, "select date, notes from sessions where id=?", [ctx.subcommand_passed])
+            await ctx.send(f"```Session number {ctx.subcommand_passed} happened on {info[0][0]}."
+                           f"\nNotes from the session:\n{info[0][1]}```")
+
+    @session.command(name="add")
     async def add_session(self, ctx, date=datetime.today().date(), notes=""):
         """Adds a session to the database. Restricted to Seb and Punky."""
         if ctx.author.id not in self.authorized:
@@ -58,11 +66,6 @@ class RightingWrongs(Cog):
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
         await ctx.invoke(command)
-
-    @commands.command(aliases=[])
-    async def session(self, ctx, session_no):
-        info = await db_call(ctx, "select date, notes from sessions where id=?", [session_no])
-        await ctx.send(f"```Session number {session_no} happened on {info[0][0]}.\nNotes from the session:\n{info[0][1]}```")
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil", "worldanvil"])
     async def world_anvil(self, ctx):
