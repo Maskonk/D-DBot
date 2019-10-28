@@ -54,8 +54,12 @@ class RightingWrongs(Cog):
     async def session(self, ctx):
         if ctx.invoked_subcommand is None:
             info = await db_call(ctx, "select date, notes from sessions where id=?", [ctx.subcommand_passed])
-            await ctx.send(f"```Session number {ctx.subcommand_passed} happened on {info[0][0]}."
-                           f"\nNotes from the session:\n{info[0][1]}```")
+            if info:
+                await ctx.send(f"```Session number {ctx.subcommand_passed} happened on {info[0][0]}."
+                               f"\nNotes from the session:\n{info[0][1]}```")
+            else:
+                count = await db_call(ctx, "select count(*) from sessions")
+                await ctx.send(f"No session with that number found, please try a number between 1 and {count[0][0]}")
 
     @session.command(name="add")
     @commands.check(is_authorized)
