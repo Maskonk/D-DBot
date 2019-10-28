@@ -8,13 +8,12 @@ from util import db_call, is_authorized
 
 
 class RightingWrongs(Cog):
-    def __init__(self, bot, stats, admins):
+    def __init__(self, bot, stats):
         self.bot = bot
         self.stats = stats
         next_date = split("\D+", stats["statistics"]["next"])
         self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
                                      int(next_date[4]), int(next_date[5]))
-        self.authorized = admins
 
     @commands.command(name="neartpks", aliases=["tpks"])
     async def neartpks(self, ctx):

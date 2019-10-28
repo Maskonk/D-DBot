@@ -5,10 +5,9 @@ from util import db_call
 
 
 class Dnd(Cog):
-    def __init__(self, bot, stats, admins):
+    def __init__(self, bot, stats):
         self.bot = bot
         self.stats = stats
-        self.admins = admins
 
     @commands.command(aliases=["roll", "Roll", "Stats"])
     async def stats(self, ctx):
