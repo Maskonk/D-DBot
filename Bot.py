@@ -12,7 +12,6 @@ with open('stats.json', 'r') as f:
     stats = load(f)
 
 client = Bot(command_prefix=bot_prefix)
-admins = [167967067222441984, 168009927015661568]
 
 
 @client.event

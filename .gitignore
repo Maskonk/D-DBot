@@ -3,3 +3,4 @@ venv
 .idea
 tester.py
 dnd.db
+__pycache__

@@ -98,18 +98,3 @@ class Dnd(Cog):
         character = [name, level, dclass, ctx.author.id, 1]
         await db_call(ctx, "insert into characters (name, level, class, owner, status) values (?,?,?,?,?)", character)
         await ctx.send("Character has been added. Use .character <name> to see it.")
-
-    # async def db_call(self, ctx, sql, filtered=[]):
-    #     try:
-    #         db = connect('dnd.db')
-    #         conn = db.cursor()
-    #         conn.execute(sql, filtered)
-    #         db.commit()
-    #         return conn.fetchall()
-    #     except Exception as e:
-    #         print(e)
-    #         await ctx.send("An error has occurred with this command, please try again. "
-    #                        "If this error persists please report it to Punky.")
-    #     finally:
-    #         if db:
-    #             db.close()
