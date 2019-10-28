@@ -154,8 +154,6 @@ class RightingWrongs(Cog):
             return "th"
 
     def format_date(self, date):
-        print(date)
         date = date.split("-")
-        print(date)
         day = datetime(int(date[0]), int(date[1]), int(date[2]), 17, 30, 00)
         return day
