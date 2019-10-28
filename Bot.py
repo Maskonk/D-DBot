@@ -34,7 +34,9 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("You have missed {} from the command. Use .help <command_name> for exactly what is required."
                        .format(error.param))
-        print(error.param)
+    elif isinstance(error, commands.BotMissingPermissions):
+        await ctx.send("The bot does not currently have permissions to perform this action, please report this to "
+                       "Punky.")
 
 
 @client.command(aliases=["Suggestions", "Suggest", "suggest", "suggestion", "Suggestion"])
