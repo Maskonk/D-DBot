@@ -37,6 +37,10 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.BotMissingPermissions):
         await ctx.send("The bot does not currently have permissions to perform this action, please report this to "
                        "Punky.")
+    else:
+        print(error)
+        await ctx.send("An error has occurred with this command, please try again, if this persists please report it "
+                       "to Punky.")
 
 
 @client.command(aliases=["Suggestions", "Suggest", "suggest", "suggestion", "Suggestion"])
