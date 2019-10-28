@@ -29,7 +29,7 @@ class RightingWrongs(Cog):
             info = await db_call(ctx, "select session_id, notes from near_tpks where id=?", [ctx.subcommand_passed])
             if info:
                 await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
-                               f"\nNotes from the near TPK: {info[0][1]}```")
+                               f"\nNotes from the near TPK:\n{info[0][1]}```")
             else:
                 count = await db_call(ctx, "select count(*) from near_tpks")
                 await ctx.send(f"No tpk with that number found, please try a number between 1 and {count[0][0]}")
@@ -42,6 +42,13 @@ class RightingWrongs(Cog):
         await ctx.send("Near Total Party Kills updated.")
         command = self.bot.get_command("neartpks")
         await ctx.invoke(command)
+
+    @near_tpk.command(name="update")
+    @commands.check(is_authorized)
+    async def update_tpk(self, ctx, tpk_no, notes):
+        """Update the notes for a given near TPK."""
+        await db_call(ctx, "update near_tpks set (notes) = (?) where id=?", [notes, tpk_no])
+        await ctx.send("Notes for that near TPK have been updated.")
 
     @commands.command(name="sessions", aliases=["played"])
     async def sessions(self, ctx):
@@ -69,6 +76,13 @@ class RightingWrongs(Cog):
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
         await ctx.invoke(command)
+
+    @session.command(name="update")
+    @commands.check(is_authorized)
+    async def update_session(self, ctx, session_no, notes):
+        """Update the notes for a given session."""
+        await db_call(ctx, "update sessions set (notes) = (?) where id=?", [notes, session_no])
+        await ctx.send("Notes for that session have been updates.")
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil", "worldanvil"])
     async def world_anvil(self, ctx):
