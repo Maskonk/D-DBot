@@ -13,8 +13,10 @@ create table characters (
     name varchar(255) not null unique,
     level int2 not null,
     class varchar(8) not null,
+    race varchar(8) not null,
     owner int8,
-    status references status(status)
+    status references status(status),
+    notes text
 );
 
 create table sessions (
@@ -34,14 +36,12 @@ insert into status (status) values ("retired");
 insert into status (status) values ("dead");
 
 
-insert into characters (name, level, class, owner, status) values ("Rularuu", 2, "Wizard", 168009927015661568, 1);
-insert into characters (name, level, class, owner, status) values ("Annari", 2, "Barbarian", 247328517207883776, 1);
-insert into characters (name, level, class, owner, status) values ("Aineias", 2, "Chirurgeon", 185039984124755968, 1);
-insert into characters (name, level, class, owner, status) values ("?", 2, "Fighter", 211210914429534209, 1);
+insert into characters (name, level, class, race, owner, status, notes) values ("Rularuu", 2, "Wizard", "Human", 168009927015661568, 1, "");
+insert into characters (name, level, class, race, owner, status, notes) values ("Annari", 2, "Barbarian", "Human", 247328517207883776, 1, "");
+insert into characters (name, level, class, race, owner, status, notes) values ("Aineias", 2, "Chirurgeon", "Human", 185039984124755968, 1, "");
+insert into characters (name, level, class, race, owner, status, notes) values ("Nora", 2, "Fighter", "Human", 211210914429534209, 1, "");
 
 insert into sessions (date, notes) values ("2019-10-17", "Session 1, character introduction. Fighting Gnoles and exploring.");
 insert into near_tpks (session_id, notes) values (1, "Fighting Gnoles, Madcat screwed his HP and died in two hits.");
 
 UPDATE sessions set (notes) = ("Arrival at Northedge, introduction to characters, investigation into deaths of Guardians of Synia. Chased off Gnoles from Aldinox's characters farm.") where id=1;
-insert into characters (name, level, class, owner, status) values ("Maskonk", 7, "Rogue", 168009927015661568, 1);
-update characters set status = (2) where name="Maskonk";
