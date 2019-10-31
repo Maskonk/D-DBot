@@ -26,10 +26,14 @@ class RightingWrongs(Cog):
     async def near_tpk(self, ctx):
         """Lists the information for a given TPK."""
         if ctx.invoked_subcommand is None:
-            info = await db_call(ctx, "select session_id, notes from near_tpks where id=?", [ctx.subcommand_passed])
+            info = await db_call(ctx, "select near_tpks.session_id, near_tpks.notes, sessions.date from near_tpks "
+                                      "join sessions on near_tpks.session_id = sessions.id where near_tpks.id=?",
+                                      [ctx.subcommand_passed])
             if info:
-                await ctx.send(f"```The near TPK happened in session number {info[0][0]}"
-                               f"\nNotes from the near TPK:\n{info[0][1]}```")
+                day = self.format_date(info[0][2])
+                await ctx.send(f"```The near TPK happened on {day_name[day.weekday()]} the "
+                               f"{day.day}{self.get_indicator(day.day)} of {month_name[day.month]} {day.year} "
+                               f"in session number {info[0][0]}.\nNotes from the near TPK:\n{info[0][1]}```")
             else:
                 count = await db_call(ctx, "select count(*) from near_tpks")
                 await ctx.send(f"No tpk with that number found, please try a number between 1 and {count[0][0]}")
@@ -62,7 +66,9 @@ class RightingWrongs(Cog):
         if ctx.invoked_subcommand is None:
             info = await db_call(ctx, "select date, notes from sessions where id=?", [ctx.subcommand_passed])
             if info:
-                await ctx.send(f"```Session number {ctx.subcommand_passed} happened on {info[0][0]}."
+                day = self.format_date(info[0][0])
+                await ctx.send(f"```Session number {ctx.subcommand_passed} happened on {day_name[day.weekday()]} the "
+                               f"{day.day}{self.get_indicator(day.day)} of {month_name[day.month]} {day.year}."
                                f"\nNotes from the session:\n{info[0][1]}```")
             else:
                 count = await db_call(ctx, "select count(*) from sessions")
@@ -146,3 +152,8 @@ class RightingWrongs(Cog):
             return nth[str(day)[-1]]
         else:
             return "th"
+
+    def format_date(self, date):
+        date = date.split("-")
+        day = datetime(int(date[0]), int(date[1]), int(date[2]), 17, 30, 00)
+        return day
