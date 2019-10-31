@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
 from random import randint
-from util import db_call, is_authorized
+from src.util import db_call, is_authorized
 
 
 class Dnd(Cog):

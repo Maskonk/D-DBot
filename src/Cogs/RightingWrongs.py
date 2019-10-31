@@ -4,7 +4,7 @@ from datetime import datetime
 from calendar import month_name, day_name
 from re import split
 from json import dump
-from util import db_call, is_authorized
+from src.util import db_call, is_authorized
 
 
 class RightingWrongs(Cog):
