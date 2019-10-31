@@ -112,5 +112,19 @@ class Dnd(Cog):
             else:
                 await ctx.send("You are not the owner of this character to update it.")
         else:
+            await ctx.send("No character found by that name.")\
+
+    @character.command(name="kill")
+    async def retire_character(self, ctx, name):
+        """Set the status of a given character to dead. Restricted to the characters owner or an admin."""
+        name = name.capitalize()
+        character = await db_call(ctx, "select owner from characters where name=?", [name])
+        if character:
+            if character[0][0] == ctx.author.id or await is_authorized(ctx):
+                await db_call(ctx, "update characters set status = (3) where name=?", [name])
+                await ctx.send("Character has been retired.")
+            else:
+                await ctx.send("You are not the owner of this character to update it.")
+        else:
             await ctx.send("No character found by that name.")
 
