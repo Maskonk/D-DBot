@@ -1,8 +1,8 @@
 from discord.ext.commands import Bot
 from discord import Game
 from discord.ext import commands
-from RightingWrongs import RightingWrongs
-from Dnd import Dnd
+from src.Cogs.RightingWrongs import RightingWrongs
+from src.Cogs.Dnd import Dnd
 from json import load
 
 bot_prefix = "."
