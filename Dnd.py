@@ -93,12 +93,14 @@ class Dnd(Cog):
                 await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
 
     @character.command(name="add")
-    async def add_character(self, ctx, name, level: int, dclass):
+    async def add_character(self, ctx, name, level: int, dclass, race, notes=""):
         """Add a class to the list. Assumes the character starts alive."""
         name = name.capitalize()
         dclass = dclass.capitalize()
-        character = [name, level, dclass, ctx.author.id, 1]
-        await db_call(ctx, "insert into characters (name, level, class, owner, status) values (?,?,?,?,?)", character)
+        race = race.capitalize()
+        character = [name, level, dclass, race, ctx.author.id, 1, notes]
+        await db_call(ctx, "insert into characters (name, level, class, race, owner, status, notes) "
+                           "values (?,?,?,?,?,?,?)", character)
         await ctx.send("Character has been added. Use .character <name> to see it.")
 
     @character.command(name="retire")
