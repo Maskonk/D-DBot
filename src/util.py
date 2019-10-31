@@ -4,7 +4,7 @@ from sqlite3 import connect
 async def db_call(ctx, sql, filtered=()):
     db = None
     try:
-        db = connect('dnd.db')
+        db = connect('db/dnd.db')
         conn = db.cursor()
         conn.execute(sql, filtered)
         db.commit()
