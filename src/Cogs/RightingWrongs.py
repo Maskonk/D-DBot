@@ -114,15 +114,21 @@ class RightingWrongs(Cog):
                   f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of " \
                   f"{month_name[self.next_session.month]}, starting at {self.next_session.hour}h" \
                   f"{self.next_session.minute} UK time or {self.next_session.hour + 1}h{self.next_session.minute} " \
-                  f"Belgian time.\nIn "
-            if days[0] > 0:
-                msg += f"{days[0]: .0f} days "
-            if hours[0] > 0:
-                msg += f"{hours[0]: .0f} hours "
-            if minutes[0] > 0:
-                msg += f"{minutes[0]: .0f} minutes "
-            if seconds[0] > 0:
-                msg += f"{seconds[0]: .0f} seconds."
+                  f"Belgian time."
+
+            if self.next_session > datetime.now():
+                msg += "\nIn "
+                if days[0] > 0:
+                    msg += f"{days[0]: .0f} days "
+                if hours[0] > 0:
+                    msg += f"{hours[0]: .0f} hours "
+                if minutes[0] > 0:
+                    msg += f"{minutes[0]: .0f} minutes "
+                if seconds[0] > 0:
+                    msg += f"{seconds[0]: .0f} seconds."
+
+            else:
+                msg += "\nThis date has already passed and a new one should be added soon."
             await ctx.send(msg)
 
     @next.command(name='update')
