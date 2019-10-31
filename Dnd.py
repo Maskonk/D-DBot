@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
 from random import randint
-from util import db_call
+from util import db_call, is_authorized
 
 
 class Dnd(Cog):
@@ -78,11 +78,11 @@ class Dnd(Cog):
     async def character(self, ctx):
         """Shows detailed info for a given character name."""
         if ctx.invoked_subcommand is None:
-
+            name = ctx.subcommand_passed.capitalize()
             character = await db_call(ctx, "select characters.name, characters.level, characters.class, "
                                                 "characters.owner, status.status from characters "
                                                 "join status on status.id = characters.status where name=?",
-                                                [ctx.subcommand_passed])
+                                                [name])
             if character:
                 character = character[0]
                 owner = self.bot.get_user(character[3])
@@ -92,8 +92,25 @@ class Dnd(Cog):
                 await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
 
     @character.command(name="add")
-    async def add_character(self, ctx, name, level, dclass):
+    async def add_character(self, ctx, name, level: int, dclass):
         """Add a class to the list. Assumes the character starts alive."""
+        name = name.capitalize()
+        dclass = dclass.capitalize()
         character = [name, level, dclass, ctx.author.id, 1]
         await db_call(ctx, "insert into characters (name, level, class, owner, status) values (?,?,?,?,?)", character)
         await ctx.send("Character has been added. Use .character <name> to see it.")
+
+    @character.command(name="retire")
+    async def retire_character(self, ctx, name):
+        """Set the status of a given character to retired. Restricted to the characters owner or an admin."""
+        name = name.capitalize()
+        character = await db_call(ctx, "select owner from characters where name=?", [name])
+        if character:
+            if character[0][0] == ctx.author.id or await is_authorized(ctx):
+                await db_call(ctx, "update characters set status = (2) where name=?", [name])
+                await ctx.send("Character has been retired.")
+            else:
+                await ctx.send("You are not the owner of this character to update it.")
+        else:
+            await ctx.send("No character found by that name.")
+

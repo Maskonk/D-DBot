@@ -43,3 +43,5 @@ insert into sessions (date, notes) values ("2019-10-17", "Session 1, character i
 insert into near_tpks (session_id, notes) values (1, "Fighting Gnoles, Madcat screwed his HP and died in two hits.");
 
 UPDATE sessions set (notes) = ("Arrival at Northedge, introduction to characters, investigation into deaths of Guardians of Synia. Chased off Gnoles from Aldinox's characters farm.") where id=1;
+insert into characters (name, level, class, owner, status) values ("Maskonk", 7, "Rogue", 168009927015661568, 1);
+update characters set status = (2) where name="Maskonk";
