@@ -79,15 +79,16 @@ class Dnd(Cog):
         """Shows detailed info for a given character name."""
         if ctx.invoked_subcommand is None:
             name = ctx.subcommand_passed.capitalize()
-            character = await db_call(ctx, "select characters.name, characters.level, characters.class, "
-                                                "characters.owner, status.status from characters "
-                                                "join status on status.id = characters.status where name=?",
-                                                [name])
+            character = await db_call(ctx, "select characters.name, characters.level, characters.class, characters.race,"
+                                           " characters.owner, status.status, characters.notes from characters "
+                                           "join status on status.id = characters.status where name=?",
+                                           [name])
             if character:
                 character = character[0]
-                owner = self.bot.get_user(character[3])
+                owner = self.bot.get_user(character[4])
                 await ctx.send(f"```Name: {character[0]}:\nLevel: {character[1]}\nClass: {character[2]}"
-                               f"\nStatus: {character[4].capitalize()}\nOwner: {owner.display_name}```")
+                               f"\nRace: {character[3]}\nStatus: {character[5].capitalize()}"
+                               f"\nOwner: {owner.display_name}\nNotes:\n{character[6]}```")
             else:
                 await ctx.send("No character found by that name. Use .characters to see a list of all characters.")
 
