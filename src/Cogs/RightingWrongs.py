@@ -110,14 +110,20 @@ class RightingWrongs(Cog):
             hours = divmod(days[1], 3600)
             minutes = divmod(hours[1], 60)
             seconds = divmod(minutes[1], 1)
-            print(ctx.author.nick)
-            await ctx.send(f"The next session of Righting Wrongs will be on "
-                           f"{day_name[self.next_session.weekday()]} "
-                           f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of "
-                           f"{month_name[self.next_session.month]}, "
-                           f"starting at {self.next_session.hour}h{self.next_session.minute} UK time or "
-                           f"{self.next_session.hour + 1}h{self.next_session.minute} Belgian time. "
-                           f"In {days[0]: .0f} days {hours[0]: .0f} hours {minutes[0]: .0f} minutes {seconds[0]: .0f} seconds.")
+            msg = f"The next session of Righting Wrongs will be on {day_name[self.next_session.weekday()]} " \
+                  f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of " \
+                  f"{month_name[self.next_session.month]}, starting at {self.next_session.hour}h" \
+                  f"{self.next_session.minute} UK time or {self.next_session.hour + 1}h{self.next_session.minute} " \
+                  f"Belgian time.\nIn "
+            if days[0] > 0:
+                msg += f"{days[0]: .0f} days "
+            if hours[0] > 0:
+                msg += f"{hours[0]: .0f} hours "
+            if minutes[0] > 0:
+                msg += f"{minutes[0]: .0f} minutes "
+            if seconds[0] > 0:
+                msg += f"{seconds[0]: .0f} seconds."
+            await ctx.send(msg)
 
     @next.command(name='update')
     @commands.check(is_authorized)
@@ -134,7 +140,13 @@ class RightingWrongs(Cog):
         elif "h" in time:
             time = time.split("h")
 
-        self.next_session = datetime(int(date[2]), int(date[1]), int((date[0])), (int(time[0])), int(time[1]), 00)
+        new_date = datetime(int(date[2]), int(date[1]), int((date[0])), (int(time[0])), int(time[1]), 00)
+
+        if new_date < datetime.now():
+            await ctx.send("That date has already passed. Please enter a future date.")
+            return
+
+        self.next_session = new_date
 
         self.stats['statistics']["next"] = str(self.next_session)
 

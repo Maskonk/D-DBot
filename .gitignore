@@ -1,6 +1,6 @@
-token.txt
+src/token.txt
 venv
 .idea
-tester.py
-dnd.db
+src/tester.py
+src/db/dnd.db
 __pycache__
