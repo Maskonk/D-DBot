@@ -115,7 +115,7 @@ class Dnd(Cog):
             else:
                 await ctx.send("You are not the owner of this character to update it.")
         else:
-            await ctx.send("No character found by that name.")\
+            await ctx.send("No character found by that name.")
 
     @character.command(name="kill")
     async def retire_character(self, ctx, name):
