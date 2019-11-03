@@ -101,8 +101,8 @@ class RightingWrongs(Cog):
         await ctx.send("The link to the calender page is:"
                        "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
 
-    @commands.group(name="next", aliases=["Next"])
-    async def next(self, ctx):
+    @commands.group(name="next_session", aliases=["next", "Next"])
+    async def next_session(self, ctx):
         """The next session of the Righting Wrongs Campaign."""
         if ctx.invoked_subcommand is None:
             date_difference = self.next_session - datetime.now()
@@ -131,7 +131,7 @@ class RightingWrongs(Cog):
                 msg += "\nThis date has already passed and a new one should be added soon."
             await ctx.send(msg)
 
-    @next.command(name='update')
+    @next_session.command(name='update')
     @commands.check(is_authorized)
     async def update_next_session(self, ctx, date, time="17:30"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
