@@ -15,14 +15,14 @@ class RightingWrongs(Cog):
         self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
                                      int(next_date[4]), int(next_date[5]))
 
-    @commands.command(name="near_tpks", aliases=["tpks"])
+    @commands.command(name="near_tpks", aliases=["tpks", "neartpks"])
     async def near_tpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
         if ctx.invoked_subcommand is None:
             count = await db_call(ctx, "select count(*) from near_tpks")
             await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
-    @commands.group(name="near_tpk", aliases=["tpk"])
+    @commands.group(name="near_tpk", aliases=["tpk", "neartpk"])
     async def near_tpk(self, ctx):
         """Lists the information for a given TPK."""
         if ctx.invoked_subcommand is None:
