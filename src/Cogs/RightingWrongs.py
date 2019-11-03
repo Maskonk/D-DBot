@@ -15,7 +15,7 @@ class RightingWrongs(Cog):
         self.next_session = datetime(int(next_date[0]), int(next_date[1]), int(next_date[2]), int(next_date[3]),
                                      int(next_date[4]), int(next_date[5]))
 
-    @commands.command(name="neartpks", aliases=["tpks"])
+    @commands.command(name="near_tpks", aliases=["tpks"])
     async def near_tpks(self, ctx):
         """Shows the number of near Total Party Kills so far this campaign."""
         if ctx.invoked_subcommand is None:
