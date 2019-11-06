@@ -38,6 +38,7 @@ async def on_command_error(ctx, error):
         await ctx.send("The bot does not currently have permissions to perform this action, please report this to "
                        "Punky.")
     else:
+        print(error)
         await ctx.send("An error has occurred with this command, please try again, if this persists please report it "
                        "to Punky.")
 

@@ -129,7 +129,37 @@ class RightingWrongs(Cog):
 
             else:
                 msg += "\nThis date has already passed and a new one should be added soon."
-            await ctx.send(msg)
+            await ctx.send(msg)\
+
+    @commands.command()
+    @commands.check(is_authorized)
+    async def ping(self, ctx):
+        """Ping for the next session of thew Righting Wrongs campaign."""
+        date_difference = self.next_session - datetime.now()
+        role = ctx.guild.get_role(577764386832252948)
+        days = divmod(date_difference.total_seconds(), 86400)
+        hours = divmod(days[1], 3600)
+        minutes = divmod(hours[1], 60)
+        seconds = divmod(minutes[1], 1)
+        msg = f"{role.mention} The next session of Righting Wrongs will be on {day_name[self.next_session.weekday()]} " \
+              f"the {self.next_session.day}{self.get_indicator(self.next_session.day)} of " \
+              f"{month_name[self.next_session.month]}, starting at {self.next_session.hour}h" \
+              f"{self.next_session.minute} UK time or {self.next_session.hour + 1}h{self.next_session.minute} " \
+              f"Belgian time."
+        if self.next_session > datetime.now():
+            msg += "\nIn "
+            if days[0] > 0:
+                msg += f"{days[0]: .0f} days "
+            if hours[0] > 0:
+                msg += f"{hours[0]: .0f} hours "
+            if minutes[0] > 0:
+                msg += f"{minutes[0]: .0f} minutes "
+            if seconds[0] > 0:
+                msg += f"{seconds[0]: .0f} seconds."
+
+        else:
+            msg += "\nThis date has already passed and a new one should be added soon."
+        await ctx.send(msg)
 
     @next_session.command(name='update')
     @commands.check(is_authorized)
