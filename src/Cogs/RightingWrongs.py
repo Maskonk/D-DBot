@@ -163,7 +163,7 @@ class RightingWrongs(Cog):
 
     @next_session.command(name='update')
     @commands.check(is_authorized)
-    async def update_next_session(self, ctx, date, time="17:30"):
+    async def update_next_session(self, ctx, date, time="19:00"):
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
                 Format dd/mm/yy hh:mm, hour in UK time."""
 
