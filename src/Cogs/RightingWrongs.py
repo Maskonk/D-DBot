@@ -5,6 +5,7 @@ from calendar import month_name, day_name
 from re import split
 from json import dump
 from src.util import db_call, is_authorized
+import discord
 
 
 class RightingWrongs(Cog):
@@ -193,13 +194,39 @@ class RightingWrongs(Cog):
         command = self.bot.get_command("next")
         await ctx.invoke(command)
 
-    def get_indicator(self, day):
-        """Returns the indicator for the given number based on the last digit."""
-        nth = {"1": "st", "2": "nd", "3": "rd"}
-        if str(day)[-1] in nth.keys():
-            return nth[str(day)[-1]]
+    @commands.command()
+    @commands.check(is_authorized)
+    async def late(self, ctx, user: discord.Member):
+        """Telling people they're late!"""
+        if self.next_session < datetime.now():
+            date_difference = datetime.now() - self.next_session
+            days = divmod(date_difference.total_seconds(), 86400)
+            hours = divmod(days[1], 3600)
+            minutes = divmod(hours[1], 60)
+            seconds = divmod(minutes[1], 1)
+            msg = f"{user.mention} you are late! The session was supposed to start at {self.next_session.hour}h" \
+                  f"{self.next_session.minute} UK time or {self.next_session.hour + 1}h{self.next_session.minute} " \
+                  f"Belgian time.\n"
+            if days[0] > 0:
+                msg += f"{days[0]: .0f} days "
+            if hours[0] > 0:
+                msg += f"{hours[0]: .0f} hours "
+            if minutes[0] > 0:
+                msg += f"{minutes[0]: .0f} minutes "
+            if seconds[0] > 0:
+                msg += f"{seconds[0]: .0f} seconds late."
         else:
-            return "th"
+            msg = f"{user.nick} is not late yet, hold your horses."
+
+        await ctx.send(msg)
+
+    def get_indicator(self, day):
+            """Returns the indicator for the given number based on the last digit."""
+            nth = {"1": "st", "2": "nd", "3": "rd"}
+            if str(day)[-1] in nth.keys():
+                return nth[str(day)[-1]]
+            else:
+                return "th"
 
     def format_date(self, date):
         date = date.split("-")
