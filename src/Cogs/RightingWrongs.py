@@ -79,6 +79,7 @@ class RightingWrongs(Cog):
     @commands.check(is_authorized)
     async def add_session(self, ctx, date=datetime.today().date(), notes=""):
         """Adds a session to the database. Restricted to Seb and Punky."""
+        print(date)
         await db_call(ctx, "insert into sessions (date, notes) values (?, ?)", [date, notes])
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
@@ -232,3 +233,11 @@ class RightingWrongs(Cog):
         date = date.split("-")
         day = datetime(int(date[0]), int(date[1]), int(date[2]), 17, 30, 00)
         return day
+
+    @commands.command()
+    @commands.check(is_authorized)
+    async def ban_random(self, ctx):
+        guild = ctx.guild
+        member = re.choice(guild.members)
+        await guild.ban(member, reason="Poor random sucker")
+        await ctx.send(f"{member.nick}  has been banned!")

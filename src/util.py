@@ -21,3 +21,7 @@ async def db_call(ctx, sql, filtered=()):
 async def is_authorized(ctx):
     admins = [167967067222441984, 168009927015661568]
     return ctx.author.id in admins
+
+
+async def bot_channel(ctx):
+    return ctx.channel.id == 702193202786205799

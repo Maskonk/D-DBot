@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
 from random import randint
-from src.util import db_call, is_authorized
+from src.util import db_call, is_authorized, bot_channel
 from random import choice
 
 
@@ -144,6 +144,31 @@ class Dnd(Cog):
                    "I am pretty sure assassins are after me so I have to go into hiding.",
                    "my brother joined a cult that worships Seb as their deity, I have to go shock him to his senses.",
                    "my religion believes that the world ends next week and it is my duty to make as much chaos and "
-                   "mayhem so that even if it doesn't it looks like it has."]
+                   "mayhem as I can, so that even if it doesn't it looks like it has.",
+                   "Zombie told me Seb is planning on killing my PC so I need to think of a new character concept."]
         await ctx.send(f"I can't make it {choice(excuses)}")
 
+    @commands.command()
+    @commands.check(bot_channel)
+    async def apples(self, ctx):
+        options = ["That is not a valid command. Please use **.help** for a list of all commands.",
+                   "New phone, who dis?", "Go away! I'm sleeping.", "Who are you again?",
+                   "The bot does not currently have permissions to perform this action, please report this to Punky.",
+                   "You have missed *password* from the command. Use .help <command_name> for exactly what is required.",
+                   "You are not authorized to use this command. This command is restricted to Seb and Punky only.",
+                   "next", "excuse", "stats", "This bot is currently busy. Please try again later.",
+                   "I told my secretary I was not to be disturbed, please tell her shes fired.",
+                   "HAVE YOU HEARD OF SOCIAL DISTANCING! GET AWAY FROM ME!",
+                   "This is a pandemic what are you doing talking to me?"]
+        msg = choice(options)
+        if msg in ["next", "excuse", "stats"]:
+            command = self.bot.get_command(msg)
+            await ctx.invoke(command)
+        else:
+            await ctx.send(msg)
+
+
+
+    @apples.error
+    async def apples_handler(self, ctx, error):
+        pass

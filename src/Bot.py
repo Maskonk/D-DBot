@@ -23,6 +23,8 @@ async def on_ready():
 
 @client.event
 async def on_command_error(ctx, error):
+    if hasattr(ctx.command, 'on_error'):
+        return
     if isinstance(error, commands.CheckFailure):
         await ctx.send("You are not authorized to use this command. This command is restricted to Seb and Punky only.")
     elif isinstance(error, commands.CommandNotFound):
