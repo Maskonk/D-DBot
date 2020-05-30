@@ -5,12 +5,9 @@ from src.Cogs.RightingWrongs import RightingWrongs
 from src.Cogs.Dnd import Dnd
 from json import load
 
-bot_prefix = "."
+bot_prefix = "-"
 with open('token.txt', 'r') as f:
     token = f.read()
-
-with open('stats.json', 'r') as f:
-    stats = load(f)
 
 client = Bot(command_prefix=bot_prefix)
 
@@ -64,6 +61,6 @@ async def github(ctx):
     await ctx.send("The code for this bot is at: https://github.com/Maskonk/DnDBot")
 
 
-client.add_cog(Dnd(client, stats))
-client.add_cog(RightingWrongs(client, stats))
+client.add_cog(Dnd(client))
+client.add_cog(RightingWrongs(client))
 client.run(token)

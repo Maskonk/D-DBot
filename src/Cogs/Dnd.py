@@ -6,9 +6,8 @@ from random import choice
 
 
 class Dnd(Cog):
-    def __init__(self, bot, stats):
+    def __init__(self, bot):
         self.bot = bot
-        self.stats = stats
 
     @commands.command(aliases=["roll", "Roll", "Stats"])
     async def stats(self, ctx):
@@ -167,6 +166,36 @@ class Dnd(Cog):
         else:
             await ctx.send(msg)
 
+    @commands.command()
+    async def mark(self, ctx):
+        channels = ctx.guild.voice_channels
+        for channel in channels:
+            if ctx.author in channel.members:
+                if "(In Session)" not in channel.name:
+                    name = f"{channel.name} (In Session)"
+                    await channel.edit(name=name)
+                    break
+                else:
+                    await ctx.send("This channel has already been marked.")
+                    break
+        else:
+            await ctx.send("You must be in a voice channel to use this.")
+
+
+    @commands.command()
+    async def unmark(self, ctx):
+        channels = ctx.guild.voice_channels
+        for channel in channels:
+            if ctx.author in channel.members:
+                if "(In Session)" in channel.name:
+                    name = channel.name.replace(" (In Session)", "")
+                    await channel.edit(name=name)
+                    break
+                else:
+                    await ctx.send("This channel is not marked.")
+                    break
+        else:
+            await ctx.send("You must be in a voice channel to use this.")
 
 
     @apples.error
