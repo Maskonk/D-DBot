@@ -1,4 +1,5 @@
 from discord.ext.commands import Bot
+# from discord.utils import me
 from discord import Game
 from discord.ext import commands
 from src.Cogs.RightingWrongs import RightingWrongs

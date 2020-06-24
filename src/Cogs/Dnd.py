@@ -9,6 +9,16 @@ class Dnd(Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
+    async def stat(self, ctx):
+        message = f"{ctx.author.mention} you rolled: \n-----------\n"
+        stat = []
+        for y in range(4):
+            num = randint(1, 6)
+            stat.append(num)
+        message += f"{stat[0]} + {stat[1]} + {stat[2]} + {stat[3]} - **{sum(stat) - min(stat)}**\n"
+        await ctx.send(message)
+
     @commands.command(aliases=["roll", "Roll", "Stats"])
     async def stats(self, ctx):
         """Roll 4d6 dropping lowest for D&D"""
@@ -201,3 +211,19 @@ class Dnd(Cog):
     @apples.error
     async def apples_handler(self, ctx, error):
         pass
+
+    @commands.command()
+    async def ask(self, ctx, *question):
+        responses = ["Don't count on it.", "The gods have decreed so.", "Only if you want it bad enough.",
+                     "My sources say no.", "Very doubtful.", "Outlook not so good.", "Ask again later.",
+                     "Try asking your DM.", "Better not tell you now.", "Reply hazy try again.", "Outlook good.",
+                     "You are not supposed to know that yet. Stop trying to metagame!", "Most likely",
+                     "Of the 14,000,605 possible futures I saw only one it occurred.",
+                     "You are more likely to win the lottery", "The answers lies inside of yourself.",
+                     "The answer to that question is the same as the answer to Will people ever stop bugging me "
+                     "with question? All times of day and night I get these random ass question, Who the fuck wants to "
+                     "know if they will have toast for breakfast at four in the bloody morning!",
+                     "New phone who's this?", "The answer guys on the shitter at the moment can I take a message?",
+                     "Only if Punky says yes.", "How much are you willing to pay for an answer?",
+                     "You have reached the wrong number please hang up and try again."]
+        await ctx.send(f"Oh magic ball {' '.join(question)}\nThe magic ball says:\n{choice(responses)}")
