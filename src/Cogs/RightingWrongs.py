@@ -37,8 +37,14 @@ class RightingWrongs(Cog):
 
     @near_tpk.command(name="add")
     @commands.check(is_authorized)
-    async def add_tpk(self, ctx, session_no, notes=""):
+    async def add_tpk(self, ctx, session_no, *notes):
         """Adds a near TPK to the database. Restricted to Seb and Punky."""
+
+        if not notes:
+            notes = ""
+        else:
+            notes = " ".join(notes)
+
         await db_call(ctx, "insert into near_tpks (session_id, notes) values (?, ?)", [session_no, notes])
         await ctx.send("Near Total Party Kills updated.")
         command = self.bot.get_command("neartpks")
@@ -46,8 +52,13 @@ class RightingWrongs(Cog):
 
     @near_tpk.command(name="update")
     @commands.check(is_authorized)
-    async def update_tpk(self, ctx, tpk_no, notes):
+    async def update_tpk(self, ctx, tpk_no, *notes):
         """Update the notes for a given near TPK."""
+        if not notes:
+            notes = ""
+        else:
+            notes = " ".join(notes)
+
         await db_call(ctx, "update near_tpks set (notes) = (?) where id=?", [notes, tpk_no])
         await ctx.send("Notes for that near TPK have been updated.")
 
@@ -73,13 +84,18 @@ class RightingWrongs(Cog):
 
     @session.command(name="add")
     @commands.check(is_authorized)
-    async def add_session(self, ctx, date=None, notes=""):
+    async def add_session(self, ctx, date=None, *notes):
         """Adds a session to the database. Restricted to Seb and Punky."""
         if date is None:
             date = datetime.today().date()
         else:
             date = self.format_date(date)
-        # print(date)
+
+        if not notes:
+            notes = ""
+        else:
+            notes = " ".join(notes)
+
         await db_call(ctx, "insert into sessions (date, notes) values (?, ?)", [date, notes])
         await ctx.send("Session count updated.")
         command = self.bot.get_command("sessions")
@@ -87,8 +103,14 @@ class RightingWrongs(Cog):
 
     @session.command(name="update")
     @commands.check(is_authorized)
-    async def update_session(self, ctx, session_no, notes):
+    async def update_session(self, ctx, session_no, *notes):
         """Update the notes for a given session."""
+
+        if not notes:
+            notes = ""
+        else:
+            notes = " ".join(notes)
+
         await db_call(ctx, "update sessions set (notes) = (?) where id=?", [notes, session_no])
         await ctx.send("Notes for that session have been updates.")
 
@@ -258,7 +280,6 @@ class RightingWrongs(Cog):
             return "th"
 
     def format_date(self, date):
-        print(date)
         if "/" in date:
             date = date.split("/")
             day = datetime(2000 + int(date[2]), int(date[1]), int(date[0]), 17, 30, 00)
