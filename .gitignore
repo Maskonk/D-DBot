@@ -4,3 +4,4 @@ venv
 src/tester.py
 src/db/dnd.db
 __pycache__
+test.mp3

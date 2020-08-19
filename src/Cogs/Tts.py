@@ -28,7 +28,7 @@ class Tts(Cog):
     async def speak(self, ctx, *text):
         # ctx.voice_client.source.volume = 100 / 100
         msg = " ".join(text)
-        self.engine.save_to_file(msg, 'test')
+        self.engine.save_to_file(msg, 'test.mp3')
         self.engine.runAndWait()
         source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(executable=r"D:\Program Files\ffmpeg\bin\ffmpeg.exe", source="test.mp3"))
         ctx.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
