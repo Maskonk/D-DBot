@@ -174,7 +174,6 @@ class RightingWrongs(Cog):
 
         l = await db_call(ctx, "select id, abbreviation from campaigns where abbreviation=?", [campaign])
         id, name = l[0]
-        print(id, name)
         if not id:
             await ctx.send("That is not a valid campaign name, please make sure your capitalization is correct.")
             return
