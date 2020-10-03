@@ -4,7 +4,6 @@ from sqlite3 import connect
 async def db_call(ctx, sql: str, filtered: tuple = ()) -> None:
     """
     Connects to the database for the bot and executes the gives SQL query on that database.
-    :param ctx: The context for the command that wanted to connect to the DB, used for user error reporting.
     :param sql: The sql query to execute
     :param filtered: Any data to be inserted.
     """
@@ -24,10 +23,16 @@ async def db_call(ctx, sql: str, filtered: tuple = ()) -> None:
             db.close()
 
 
-async def is_authorized(ctx):
-    admins = [167967067222441984, 168009927015661568]
-    return ctx.author.id in admins
+async def is_authorized(ctx) -> bool:
+    """
+    A check for the bot for privileged commands if the user is authorized to use the command.
+    """
+    return ctx.author.id in [167967067222441984, 168009927015661568]
 
 
-async def bot_channel(ctx):
+async def bot_channel(ctx) -> bool:
+    """
+    A check for the bot to check if the channel a command is called in is the right channel.
+    :return: Boolean if the channel id where the command is called is the channel the command can be called in.
+    """
     return ctx.channel.id == 702193202786205799
