@@ -26,6 +26,7 @@ async def db_call(ctx, sql: str, filtered: tuple = ()) -> None:
 async def is_authorized(ctx) -> bool:
     """
     A check for the bot for privileged commands if the user is authorized to use the command.
+    :return: Boolean if the users id is in the list of authorized users.
     """
     return ctx.author.id in [167967067222441984, 168009927015661568]
 
