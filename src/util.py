@@ -1,7 +1,13 @@
 from sqlite3 import connect
 
 
-async def db_call(ctx, sql, filtered=()):
+async def db_call(ctx, sql: str, filtered: tuple = ()) -> None:
+    """
+    Connects to the database for the bot and executes the gives SQL query on that database.
+    :param ctx: The context for the command that wanted to connect to the DB, used for user error reporting.
+    :param sql: The sql query to execute
+    :param filtered: Any data to be inserted.
+    """
     db = None
     try:
         db = connect('db/dnd.db')
