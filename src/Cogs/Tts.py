@@ -26,7 +26,6 @@ class Tts(Cog):
 
     @commands.command()
     async def speak(self, ctx, *text):
-        # ctx.voice_client.source.volume = 100 / 100
         msg = " ".join(text)
         self.engine.save_to_file(msg, 'test.mp3')
         self.engine.runAndWait()
