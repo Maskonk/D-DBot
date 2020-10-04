@@ -25,7 +25,7 @@ class Tts(Cog):
         await ctx.voice_client.disconnect()
 
     @commands.command()
-    async def speak(self, ctx: context, *text: list) -> None:
+    async def speak(self, ctx: context, *text) -> None:
         msg = " ".join(text)
         self.engine.save_to_file(msg, 'test.mp3')
         self.engine.runAndWait()

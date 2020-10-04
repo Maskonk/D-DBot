@@ -1,11 +1,9 @@
 from discord.ext.commands import Bot
-# from discord.utils import me
 from discord import Game
 from discord.ext import commands
-from src.Cogs.RightingWrongs import RightingWrongs
-from src.Cogs.Dnd import Dnd
-from src.Cogs.Tts import Tts
-from json import load
+from Cogs.RightingWrongs import RightingWrongs
+from Cogs.Dnd import Dnd
+from Cogs.Tts import Tts
 
 bot_prefix = "-"
 with open('token.txt', 'r') as f:
