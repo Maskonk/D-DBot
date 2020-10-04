@@ -1,9 +1,7 @@
-from discord.ext.commands import Cog
+from discord.ext.commands import Cog, context
 from discord.ext import commands
 from datetime import datetime
 from calendar import month_name, day_name
-from re import split
-from json import dump
 from src.util import db_call, is_authorized
 import discord
 
@@ -13,14 +11,14 @@ class RightingWrongs(Cog):
         self.bot = bot
 
     @commands.command(name="near_tpks", aliases=["tpks", "neartpks"])
-    async def near_tpks(self, ctx):
+    async def near_tpks(self, ctx: context) -> None:
         """Shows the number of near Total Party Kills so far this campaign."""
         if ctx.invoked_subcommand is None:
             count = await db_call(ctx, "select count(*) from near_tpks")
             await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
     @commands.group(name="near_tpk", aliases=["tpk", "neartpk"], invoke_without_command=True)
-    async def near_tpk(self, ctx):
+    async def near_tpk(self, ctx: context) -> None:
         """Lists the information for a given TPK."""
         if ctx.invoked_subcommand is None:
             info = await db_call(ctx, "select near_tpks.session_id, near_tpks.notes, sessions.date from near_tpks "
@@ -37,7 +35,7 @@ class RightingWrongs(Cog):
 
     @near_tpk.command(name="add")
     @commands.check(is_authorized)
-    async def add_tpk(self, ctx, session_no, *notes):
+    async def add_tpk(self, ctx: context, session_no: int, *notes: list) -> None:
         """Adds a near TPK to the database. Restricted to Seb and Punky."""
 
         if not notes:
@@ -52,7 +50,7 @@ class RightingWrongs(Cog):
 
     @near_tpk.command(name="update")
     @commands.check(is_authorized)
-    async def update_tpk(self, ctx, tpk_no, *notes):
+    async def update_tpk(self, ctx: context, tpk_no: int, *notes: int) -> None:
         """Update the notes for a given near TPK."""
         if not notes:
             notes = ""
@@ -63,14 +61,14 @@ class RightingWrongs(Cog):
         await ctx.send("Notes for that near TPK have been updated.")
 
     @commands.command(name="sessions", aliases=["played"])
-    async def sessions(self, ctx):
+    async def sessions(self, ctx: context) -> None:
         """Shows the number of sessions played so far this campaign."""
         if ctx.invoked_subcommand is None:
             count = await db_call(ctx, "select count(*) from sessions")
             await ctx.send(f"The party has had {count[0][0]} sessions so far this campaign.")
 
     @commands.group(name="session", aliases=[], invoke_without_command=True)
-    async def session(self, ctx):
+    async def session(self, ctx: context) -> None:
         if ctx.invoked_subcommand is None:
             info = await db_call(ctx, "select date, notes from sessions where id=?", [ctx.subcommand_passed])
             if info:
@@ -84,7 +82,7 @@ class RightingWrongs(Cog):
 
     @session.command(name="add")
     @commands.check(is_authorized)
-    async def add_session(self, ctx, date=None, *notes):
+    async def add_session(self, ctx: context, date: str = None, *notes: list) -> None:
         """Adds a session to the database. Restricted to Seb and Punky."""
         if date is None:
             date = datetime.today().date()
@@ -103,7 +101,7 @@ class RightingWrongs(Cog):
 
     @session.command(name="update")
     @commands.check(is_authorized)
-    async def update_session(self, ctx, session_no, *notes):
+    async def update_session(self, ctx: context, session_no: int, *notes: list) -> None:
         """Update the notes for a given session."""
 
         if not notes:
@@ -115,7 +113,7 @@ class RightingWrongs(Cog):
         await ctx.send("Notes for that session have been updates.")
 
     @commands.group(name="next", aliases=[], invoke_without_command=True)
-    async def next(self, ctx, campaign_abb):
+    async def next(self, ctx: context, campaign_abb: list) -> None:
         """The next session of the Righting Wrongs Campaign."""
         if ctx.invoked_subcommand is None:
             db = await db_call(ctx, "select date, name from next_sessions join campaigns on next_sessions.campaign = "
@@ -154,7 +152,7 @@ class RightingWrongs(Cog):
 
     @next.command(name='update', aliases=["update_next", "Update"])
     @commands.check(is_authorized)
-    async def update_next_session(self, ctx, campaign: str, date: str, time: str = "19:00"):
+    async def update_next_session(self, ctx: context, campaign: str, date: str, time: str = "19:00") -> None:
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
                 Format dd/mm/yy hh:mm, hour in UK time."""
         date = date.split("/")
@@ -186,7 +184,7 @@ class RightingWrongs(Cog):
 
     @commands.command()
     @commands.check(is_authorized)
-    async def ping(self, ctx, abb: str):
+    async def ping(self, ctx: context, abb: str) -> None:
         """Ping for the next session of thew Righting Wrongs campaign."""
 
         db = await db_call(ctx, "select date, name, role from next_sessions join campaigns on next_sessions.campaign = "
@@ -226,7 +224,7 @@ class RightingWrongs(Cog):
 
     @commands.command()
     @commands.check(is_authorized)
-    async def late(self, ctx, abb: str, user: discord.Member):
+    async def late(self, ctx: context, abb: str, user: discord.Member) -> None:
         """Telling people they're late!"""
 
         db = await db_call(ctx, "select date from next_sessions join campaigns on next_sessions.campaign = "
@@ -260,17 +258,17 @@ class RightingWrongs(Cog):
         await ctx.send(msg)
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil", "worldanvil"])
-    async def world_anvil(self, ctx):
+    async def world_anvil(self, ctx: context) -> None:
         """Link to the campaign's World Anvil page."""
         await ctx.send("The link to the World Anvil page is:\nhttps://www.worldanvil.com/w/ehldaron-sebaddon")
 
     @commands.command()
-    async def calender(self, ctx):
+    async def calender(self, ctx: context) -> None:
         """Link to the campaign's World Anvil page."""
         await ctx.send("The link to the calender page is:"
                        "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
 
-    def get_indicator(self, day):
+    def get_indicator(self, day: int) -> str:
         """Returns the indicator for the given number based on the last digit."""
         nth = {"1": "st", "2": "nd", "3": "rd"}
         if str(day)[-1] in nth.keys():
@@ -278,7 +276,7 @@ class RightingWrongs(Cog):
         else:
             return "th"
 
-    def format_date(self, date):
+    def format_date(self, date: str) -> str:
         if "/" in date:
             date = date.split("/")
             day = datetime(2000 + int(date[2]), int(date[1]), int(date[0]), 17, 30, 00)
@@ -287,5 +285,5 @@ class RightingWrongs(Cog):
             day = datetime(int(date[0]), int(date[1]), int(date[2]), 17, 30, 00)
         return day.date()
 
-    def get_next_session(self, campaign_abb):
+    def get_next_session(self, campaign_abb: str) -> str:
         pass

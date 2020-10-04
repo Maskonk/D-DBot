@@ -1,6 +1,5 @@
-from discord.ext.commands import Cog
+from discord.ext.commands import Cog, context
 from discord.ext import commands
-from discord.ext.commands import context
 from random import randint
 from src.util import db_call, is_authorized, bot_channel
 from random import choice
@@ -91,7 +90,7 @@ class Dnd(Cog):
             msg += "```"
         await ctx.send(msg)
 
-    @commands.group(name="character")
+    @commands.group(name="character", invoke_without_command=True)
     async def character(self, ctx: context):
         """
         Shows detailed info for a given character name.
@@ -250,7 +249,7 @@ class Dnd(Cog):
         pass
 
     @commands.command()
-    async def ask(self, ctx: context, *question: str) -> None:
+    async def ask(self, ctx: context, *question: list) -> None:
         """
         8-ball style command. Ask a question and it will gives a response.
         :param question:  The question asked.
