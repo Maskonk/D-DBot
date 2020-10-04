@@ -1,7 +1,8 @@
 from sqlite3 import connect
+from discord.ext.commands import context
 
 
-async def db_call(ctx, sql: str, filtered: tuple = ()) -> None:
+async def db_call(ctx: context, sql: str, filtered: list = ()) -> list:
     """
     Connects to the database for the bot and executes the gives SQL query on that database.
     :param sql: The sql query to execute
@@ -23,7 +24,7 @@ async def db_call(ctx, sql: str, filtered: tuple = ()) -> None:
             db.close()
 
 
-async def is_authorized(ctx) -> bool:
+async def is_authorized(ctx: context) -> bool:
     """
     A check for the bot for privileged commands if the user is authorized to use the command.
     :return: Boolean if the users id is in the list of authorized users.
@@ -31,7 +32,7 @@ async def is_authorized(ctx) -> bool:
     return ctx.author.id in [167967067222441984, 168009927015661568]
 
 
-async def bot_channel(ctx) -> bool:
+async def bot_channel(ctx: context) -> bool:
     """
     A check for the bot to check if the channel a command is called in is the right channel.
     :return: Boolean if the channel id where the command is called is the channel the command can be called in.

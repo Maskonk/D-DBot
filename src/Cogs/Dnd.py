@@ -1,5 +1,6 @@
 from discord.ext.commands import Cog
 from discord.ext import commands
+from discord.ext.commands import context
 from random import randint
 from src.util import db_call, is_authorized, bot_channel
 from random import choice
@@ -10,7 +11,10 @@ class Dnd(Cog):
         self.bot = bot
 
     @commands.command()
-    async def stat(self, ctx):
+    async def stat(self, ctx: context) -> None:
+        """
+        Simulates rolling 4d6 and dropping the lowest for a single character statistic.
+        """
         message = f"{ctx.author.mention} you rolled: \n-----------\n"
         stat = []
         for y in range(4):
@@ -20,9 +24,10 @@ class Dnd(Cog):
         await ctx.send(message)
 
     @commands.command(aliases=["roll", "Roll", "Stats"])
-    async def stats(self, ctx):
-        """Roll 4d6 dropping lowest for D&D"""
-        # TODO: over/below average
+    async def stats(self, ctx: context) -> None:
+        """
+        Simulates rolling 4d6 and dropping the lowest six times for a characters statistics array.
+        """
         message = f"{ctx.author.mention} your stats are: \n-----------\n"
         full_stats = []
         for x in range(6):
@@ -37,12 +42,14 @@ class Dnd(Cog):
         await ctx.send(message)
 
     @commands.command()
-    async def characters(self, ctx, status="all"):
-        """Lists all characters registered. Can optionally give a status [alive|retired|dead]
-        to see only those characters."""
+    async def characters(self, ctx: context, status: str = "all") -> None:
+        """
+        Lists all characters registered for a given status.
+        :param status: All characters of the given status from Alive, Retired or Dead. All can be used to see very
+        character.
+        """
         status = status.lower()
-        valid = ["alive", "retired", "dead", "all"]
-        if status not in valid:
+        if status not in ["alive", "retired", "dead", "all"]:
             await ctx.send("That is not a valid status, Please use alive, retired, dead or all.")
             return
 
@@ -85,8 +92,10 @@ class Dnd(Cog):
         await ctx.send(msg)
 
     @commands.group(name="character")
-    async def character(self, ctx):
-        """Shows detailed info for a given character name."""
+    async def character(self, ctx: context):
+        """
+        Shows detailed info for a given character name.
+        :param name: The character name to look up."""
         if ctx.invoked_subcommand is None:
             if ctx.subcommand_passed:
                 name = ctx.subcommand_passed.capitalize()
@@ -106,8 +115,15 @@ class Dnd(Cog):
                 await ctx.send("Please specify a name to search for.")
 
     @character.command(name="add")
-    async def add_character(self, ctx, name, level: int, dclass, race, notes=""):
-        """Add a class to the list. Assumes the character starts alive."""
+    async def add_character(self, ctx: context, name: str, level: int, dclass: str, race: str, notes: str = "") -> None:
+        """
+        Add a character to the list. Assumes the character starts alive.
+        :param name: The characters name.
+        :param level: The characters level.
+        :param dclass: The characters D&D class.
+        :param race: The characters D&D race.
+        :param notes: Any public notes for the character.
+        """
         name = name.capitalize()
         dclass = dclass.capitalize()
         race = race.capitalize()
@@ -117,8 +133,11 @@ class Dnd(Cog):
         await ctx.send("Character has been added. Use .character <name> to see it.")
 
     @character.command(name="retire")
-    async def retire_character(self, ctx, name):
-        """Set the status of a given character to retired. Restricted to the characters owner or an admin."""
+    async def retire_character(self, ctx: context, name: str) -> None:
+        """
+        Set the status of a given character to retired. Restricted to the characters owner or an admin."
+        :param name: Name of the character to retire.
+        """""
         name = name.capitalize()
         character = await db_call(ctx, "select owner from characters where name=?", [name])
         if character:
@@ -131,8 +150,11 @@ class Dnd(Cog):
             await ctx.send("No character found by that name.")
 
     @character.command(name="kill")
-    async def kill_character(self, ctx, name):
-        """Set the status of a given character to dead. Restricted to the characters owner or an admin."""
+    async def kill_character(self, ctx: context, name: str) -> None:
+        """
+        Set the status of a given character to dead. Restricted to the characters owner or an admin.
+        :param name: Name of the character to kill.
+        """
         name = name.capitalize()
         character = await db_call(ctx, "select owner from characters where name=?", [name])
         if character:
@@ -145,7 +167,10 @@ class Dnd(Cog):
             await ctx.send("No character found by that name.")
 
     @commands.command()
-    async def excuse(self, ctx):
+    async def excuse(self, ctx: context) -> None:
+        """
+        Provides an silly excuse for not attending a session.
+        """
         excuses = ["my sister's boyfriend's neighbour's best friend's duck died, they are giving it a Viking funeral.",
                    "my electricity provider decided to be greener so cut all power it gets from "
                    "fossil fuels. Unfortunately this means they can't power as many homes including mine.",
@@ -159,7 +184,10 @@ class Dnd(Cog):
 
     @commands.command()
     @commands.check(bot_channel)
-    async def apples(self, ctx):
+    async def apples(self, ctx: context) -> None:
+        """
+        Command for providing a random command or message. Used for debugging or silliness.
+        """
         options = ["That is not a valid command. Please use **.help** for a list of all commands.",
                    "New phone, who dis?", "Go away! I'm sleeping.", "Who are you again?",
                    "The bot does not currently have permissions to perform this action, please report this to Punky.",
@@ -177,7 +205,11 @@ class Dnd(Cog):
             await ctx.send(msg)
 
     @commands.command()
-    async def mark(self, ctx):
+    async def mark(self, ctx: context) -> None:
+        """
+        Marks a voice channel as in session to warn others against joining, channel is determined by what channel the
+        user is in.
+        """
         channels = ctx.guild.voice_channels
         for channel in channels:
             if ctx.author in channel.members:
@@ -191,9 +223,11 @@ class Dnd(Cog):
         else:
             await ctx.send("You must be in a voice channel to use this.")
 
-
     @commands.command()
-    async def unmark(self, ctx):
+    async def unmark(self, ctx: context) -> None:
+        """
+        Removes the in session mark from a voice channel, channel is determined by what channel the user is in.
+        """
         channels = ctx.guild.voice_channels
         for channel in channels:
             if ctx.author in channel.members:
@@ -207,13 +241,20 @@ class Dnd(Cog):
         else:
             await ctx.send("You must be in a voice channel to use this.")
 
-
     @apples.error
-    async def apples_handler(self, ctx, error):
+    async def apples_handler(self, ctx: context, error: commands.CheckFailure) -> None:
+        """
+        Error handler for the apples command, Ignores any errors that happen with the command.
+        :param error:
+        """
         pass
 
     @commands.command()
-    async def ask(self, ctx, *question):
+    async def ask(self, ctx: context, *question: str) -> None:
+        """
+        8-ball style command. Ask a question and it will gives a response.
+        :param question:  The question asked.
+        """
         responses = ["Don't count on it.", "The gods have decreed so.", "Only if you want it bad enough.",
                      "My sources say no.", "Very doubtful.", "Outlook not so good.", "Ask again later.",
                      "Try asking your DM.", "Better not tell you now.", "Reply hazy try again.", "Outlook good.",
