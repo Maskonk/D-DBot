@@ -20,28 +20,28 @@ async def on_ready():
     print("Online")
 
 
-# @client.event
-# async def on_command_error(ctx, error):
-#     if hasattr(ctx.command, 'on_error'):
-#         return
-#     if isinstance(error, commands.CheckFailure):
-#         await ctx.send("You are not authorized to use this command. This command is restricted to Seb and Punky only.")
-#     elif isinstance(error, commands.CommandNotFound):
-#         if ctx.author.id == 247328517207883776:
-#             await ctx.message.delete()
-#             await ctx.author.send("No MadRat that is NOT a valid command.")
-#         else:
-#             await ctx.send("That is not a valid command. Please use **.help** for a list of all commands.")
-#     elif isinstance(error, commands.MissingRequiredArgument):
-#         await ctx.send("You have missed {} from the command. Use .help <command_name> for exactly what is required."
-#                        .format(error.param))
-#     elif isinstance(error, commands.BotMissingPermissions):
-#         await ctx.send("The bot does not currently have permissions to perform this action, please report this to "
-#                        "Punky.")
-#     else:
-#         print(error)
-#         await ctx.send("An error has occurred with this command, please try again, if this persists please report it "
-#                        "to Punky.")
+@client.event
+async def on_command_error(ctx, error):
+    if hasattr(ctx.command, 'on_error'):
+        return
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send("You are not authorized to use this command. This command is restricted to Seb and Punky only.")
+    elif isinstance(error, commands.CommandNotFound):
+        if ctx.author.id == 247328517207883776:
+            await ctx.message.delete()
+            await ctx.author.send("No MadRat that is NOT a valid command.")
+        else:
+            await ctx.send("That is not a valid command. Please use **.help** for a list of all commands.")
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("You have missed {} from the command. Use .help <command_name> for exactly what is required."
+                       .format(error.param))
+    elif isinstance(error, commands.BotMissingPermissions):
+        await ctx.send("The bot does not currently have permissions to perform this action, please report this to "
+                       "Punky.")
+    else:
+        print(error)
+        await ctx.send("An error has occurred with this command, please try again, if this persists please report it "
+                       "to Punky.")
 
 
 @client.command(aliases=["Suggestions", "Suggest", "suggest", "suggestion", "Suggestion"])
