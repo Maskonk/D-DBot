@@ -27,8 +27,8 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.CommandNotFound):
         await ctx.send("That is not a valid command. Please use **.help** for a list of all commands.")
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("You have missed {} from the command. Use .help <command_name> for exactly what is required."
-                       .format(error.param))
+        await ctx.send(f"You have missed {error.param} from the command. Use .help <command_name> for exactly "
+                       f"what is required.")
     elif isinstance(error, commands.BotMissingPermissions):
         await ctx.send("The bot does not currently have permissions to perform this action, please report this to "
                        "Punky.")
