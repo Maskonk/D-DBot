@@ -263,7 +263,9 @@ class Campaign(Cog):
     async def world_anvil(self, ctx: context, campaign_abb: str) -> None:
         """Link to the campaign's World Anvil page."""
         campaign = await self.get_campaign(ctx, campaign_abb)
-        if campaign["wa"]:
+        if not campaign:
+            return
+        if campaign.get("wa"):
             await ctx.send(f"The link to the World Anvil page is:\n{campaign['wa']}")
         else:
             await ctx.send("That campaign does not have a World Anvil page registered.")
@@ -272,7 +274,9 @@ class Campaign(Cog):
     async def calender(self, ctx: context, campaign_abb: str) -> None:
         """Link to the campaign's Calender page."""
         campaign = await self.get_campaign(ctx, campaign_abb)
-        if campaign["calender"]:
+        if not campaign:
+            return
+        if campaign.get("calender"):
             await ctx.send(f"The link to the calender page is:\n{campaign['calender']}")
         else:
             await ctx.send("That campaign does not have a calender page registered.")
