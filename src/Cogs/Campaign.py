@@ -26,7 +26,7 @@ class Campaign(Cog):
                                       "join sessions on near_tpks.session_id = sessions.id where near_tpks.id=?",
                                       [ctx.subcommand_passed])
             if info:
-                day = self.format_date(info[0][2])
+                day = self.format_date(info[0][2], "00:00")
                 await ctx.send(f"```The near TPK happened on {day_name[day.weekday()]} the "
                                f"{day.day}{self.get_indicator(day.day)} of {month_name[day.month]} {day.year} "
                                f"in session number {info[0][0]}.\nNotes from the near TPK:\n{info[0][1]}```")
@@ -83,12 +83,12 @@ class Campaign(Cog):
 
     @session.command(name="add")
     @commands.check(is_authorized)
-    async def add_session(self, ctx: context, date: str = None, *notes: list) -> None:
+    async def add_session(self, ctx: context, date: str = None, time: str = None, *notes: list) -> None:
         """Adds a session to the database. Restricted to Seb and Punky."""
         if date is None:
             date = datetime.today().date()
         else:
-            date = self.format_date(date)
+            date = self.format_date(date, time)
 
         if not notes:
             notes = ""
@@ -277,7 +277,7 @@ class Campaign(Cog):
         else:
             return "th"
 
-    def format_date(self, date: str, time: str) -> datetime.date:
+    def format_date(self, date: str, time: str = "") -> datetime.date:
         return parse(f"{date} {time}")
 
     def get_next_session(self, campaign_abb: str) -> str:
