@@ -276,7 +276,7 @@ class Campaign(Cog):
         else:
             return "th"
 
-    def format_date(self, date: str) -> str:
+    def format_date(self, date: str) -> datetime.date:
         if "/" in date:
             date = date.split("/")
             day = datetime(2000 + int(date[2]), int(date[1]), int(date[0]), 17, 30, 00)
