@@ -12,11 +12,13 @@ class Campaign(Cog):
         self.bot = bot
 
     @commands.command(name="near_tpks", aliases=["tpks", "neartpks"])
-    async def near_tpks(self, ctx: context) -> None:
+    async def near_tpks(self, ctx: context, campaign_abb: str) -> None:
         """Shows the number of near Total Party Kills so far this campaign."""
-        if ctx.invoked_subcommand is None:
-            count = await db_call(ctx, "select count(*) from near_tpks")
-            await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
+        campaign = await self.get_campaign(ctx, campaign_abb)
+        if not campaign:
+            return
+        count = await db_call(ctx, "select count(*) from near_tpks where campaign_id = ?", [campaign["id"]])
+        await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
     @commands.group(name="near_tpk", aliases=["tpk", "neartpk"], invoke_without_command=True)
     async def near_tpk(self, ctx: context) -> None:
