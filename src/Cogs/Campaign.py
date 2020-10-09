@@ -3,7 +3,8 @@ from discord.ext import commands
 from datetime import datetime
 from calendar import month_name, day_name
 from src.util import db_call, is_authorized
-import discord
+from discord import Member
+from dateutil.parser import parse
 
 
 class Campaign(Cog):
@@ -224,7 +225,7 @@ class Campaign(Cog):
 
     @commands.command()
     @commands.check(is_authorized)
-    async def late(self, ctx: context, abb: str, user: discord.Member) -> None:
+    async def late(self, ctx: context, abb: str, user: Member) -> None:
         """Telling people they're late!"""
 
         db = await db_call(ctx, "select date from next_sessions join campaigns on next_sessions.campaign = "
@@ -276,14 +277,8 @@ class Campaign(Cog):
         else:
             return "th"
 
-    def format_date(self, date: str) -> datetime.date:
-        if "/" in date:
-            date = date.split("/")
-            day = datetime(2000 + int(date[2]), int(date[1]), int(date[0]), 17, 30, 00)
-        elif "-" in date:
-            date = date.split("-")
-            day = datetime(int(date[0]), int(date[1]), int(date[2]), 17, 30, 00)
-        return day.date()
+    def format_date(self, date: str, time: str) -> datetime.date:
+        return parse(f"{date} {time}")
 
     def get_next_session(self, campaign_abb: str) -> str:
         pass
