@@ -269,10 +269,13 @@ class Campaign(Cog):
             await ctx.send("That campaign does not have a World Anvil page registered.")
 
     @commands.command()
-    async def calender(self, ctx: context) -> None:
-        """Link to the campaign's World Anvil page."""
-        await ctx.send("The link to the calender page is:"
-                       "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
+    async def calender(self, ctx: context, campaign_abb: str) -> None:
+        """Link to the campaign's Calender page."""
+        campaign = await self.get_campaign(ctx, campaign_abb)
+        if campaign["calender"]:
+            await ctx.send(f"The link to the calender page is:\n{campaign['calender']}")
+        else:
+            await ctx.send("That campaign does not have a calender page registered.")
 
     @commands.command()
     async def boop(self, ctx, CA):
@@ -298,7 +301,7 @@ class Campaign(Cog):
         if db:
             db = db[0]
             campaign = {"id": db[0], "name": db[1], "abbreviation": db[2], "gm": db[3], "role": db[4], "wa": db[5],
-                        "calender": db[6], "active": db[7]}
+                        "calender": db[7], "active": db[6]}
             return campaign
         else:
             await ctx.send("There is no campaign with that name.")
