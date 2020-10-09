@@ -31,7 +31,6 @@ class Campaign(Cog):
                                       "join sessions on near_tpks.session_id = sessions.id "
                                       "where near_tpks.campaign_id = ?",
                                       [campaign["id"]])
-            print(info)
 
             if 1 <= tpk_no <= len(info):
                 day = self.format_date(info[tpk_no-1][2])
@@ -60,24 +59,35 @@ class Campaign(Cog):
                       [session_no, campaign["id"],  notes])
         await ctx.send("Near Total Party Kills updated.")
 
-    @near_tpk.command(name="update")
+    @near_tpk.command(name="update", invoke_without_command=True)
     @commands.check(is_authorized)
-    async def update_tpk(self, ctx: context, tpk_no: int, *notes: int) -> None:
+    async def update_tpk(self, ctx: context, campaign_abb: str, tpk_no: int, *notes) -> None:
         """Update the notes for a given near TPK."""
-        if not notes:
-            notes = ""
-        else:
-            notes = " ".join(notes)
 
-        await db_call(ctx, "update near_tpks set (notes) = (?) where id=?", [notes, tpk_no])
+        campaign = await self.get_campaign(ctx, campaign_abb)
+        if not campaign:
+            return
+
+        info = await db_call(ctx, "select id from near_tpks where near_tpks.campaign_id = ?",
+                             [campaign["id"]])
+
+        if 1 <= tpk_no <= len(info):
+            id = info[tpk_no-1][0]
+            if not notes:
+                notes = ""
+            else:
+                notes = " ".join(notes)
+        await db_call(ctx, "update near_tpks set (notes) = (?) where id=?", [notes, id])
         await ctx.send("Notes for that near TPK have been updated.")
 
     @commands.command(name="sessions", aliases=["played"])
-    async def sessions(self, ctx: context) -> None:
+    async def sessions(self, ctx: context, campaign_abb: str) -> None:
         """Shows the number of sessions played so far this campaign."""
-        if ctx.invoked_subcommand is None:
-            count = await db_call(ctx, "select count(*) from sessions")
-            await ctx.send(f"The party has had {count[0][0]} sessions so far this campaign.")
+        campaign = await self.get_campaign(ctx, campaign_abb)
+        if not campaign:
+            return
+        count = await db_call(ctx, "select count(*) from sessions where campaign = ?", [campaign["id"]])
+        await ctx.send(f"That campaign has had {count[0][0]} sessions so far this campaign.")
 
     @commands.group(name="session", aliases=[], invoke_without_command=True)
     async def session(self, ctx: context) -> None:
