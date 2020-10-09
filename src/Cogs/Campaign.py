@@ -21,20 +21,24 @@ class Campaign(Cog):
         await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
     @commands.group(name="near_tpk", aliases=["tpk", "neartpk"], invoke_without_command=True)
-    async def near_tpk(self, ctx: context) -> None:
+    async def near_tpk(self, ctx: context, campaign_abb: str = None, tpk_no: int = None) -> None:
         """Lists the information for a given TPK."""
         if ctx.invoked_subcommand is None:
-            session_no = ctx.message.content.split()[-1]
+            campaign = await self.get_campaign(ctx, campaign_abb)
+            if not campaign:
+                return
             info = await db_call(ctx, "select near_tpks.session_id, near_tpks.notes, sessions.date from near_tpks "
-                                      "join sessions on near_tpks.session_id = sessions.id where near_tpks.id=?",
-                                      [session_no])
-            if info:
-                day = self.format_date(info[0][2], "00:00")
+                                      "join sessions on near_tpks.session_id = sessions.id "
+                                      "where near_tpks.campaign_id = ?",
+                                      [campaign["id"]])
+
+            if 1 <= tpk_no <= len(info):
+                day = self.format_date(info[tpk_no-1][2])
                 await ctx.send(f"```The near TPK happened on {day_name[day.weekday()]} the "
                                f"{day.day}{self.get_indicator(day.day)} of {month_name[day.month]} {day.year} "
                                f"in session number {info[0][0]}.\nNotes from the near TPK:\n{info[0][1]}```")
             else:
-                count = await db_call(ctx, "select count(*) from near_tpks")
+                count = await db_call(ctx, "select count(*) from near_tpks where campaign_id = ?", [campaign["id"]])
                 await ctx.send(f"No tpk with that number found, please try a number between 1 and {count[0][0]}")
 
     @near_tpk.command(name="add", invoke_without_command=True)
