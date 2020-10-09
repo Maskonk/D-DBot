@@ -21,9 +21,8 @@ class Campaign(Cog):
     @commands.group(name="near_tpk", aliases=["tpk", "neartpk"], invoke_without_command=True)
     async def near_tpk(self, ctx: context) -> None:
         """Lists the information for a given TPK."""
-        session_no = ctx.message.content.split()[-1]
-        print(session_no)
         if ctx.invoked_subcommand is None:
+            session_no = ctx.message.content.split()[-1]
             info = await db_call(ctx, "select near_tpks.session_id, near_tpks.notes, sessions.date from near_tpks "
                                       "join sessions on near_tpks.session_id = sessions.id where near_tpks.id=?",
                                       [session_no])
@@ -72,10 +71,11 @@ class Campaign(Cog):
     @commands.group(name="session", aliases=[], invoke_without_command=True)
     async def session(self, ctx: context) -> None:
         if ctx.invoked_subcommand is None:
-            info = await db_call(ctx, "select date, notes from sessions where id=?", [ctx.subcommand_passed])
+            session_no = ctx.message.content.split()[-1]
+            info = await db_call(ctx, "select date, notes from sessions where id=?", [session_no])
             if info:
                 day = self.format_date(info[0][0])
-                await ctx.send(f"```Session number {ctx.subcommand_passed} happened on {day_name[day.weekday()]} the "
+                await ctx.send(f"```Session number {session_no} happened on {day_name[day.weekday()]} the "
                                f"{day.day}{self.get_indicator(day.day)} of {month_name[day.month]} {day.year}."
                                f"\nNotes from the session:\n{info[0][1]}```")
             else:
