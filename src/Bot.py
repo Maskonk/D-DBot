@@ -1,7 +1,7 @@
 from discord.ext.commands import Bot
 from discord import Game
 from discord.ext import commands
-from Cogs.RightingWrongs import RightingWrongs
+from Cogs.Campaign import Campaign
 from Cogs.Dnd import Dnd
 from Cogs.Tts import Tts
 
@@ -62,6 +62,6 @@ async def github(ctx):
 
 
 client.add_cog(Dnd(client))
-client.add_cog(RightingWrongs(client))
+client.add_cog(Campaign(client))
 client.add_cog(Tts(client))
 client.run(token)

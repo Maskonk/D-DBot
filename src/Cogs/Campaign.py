@@ -6,7 +6,7 @@ from src.util import db_call, is_authorized
 import discord
 
 
-class RightingWrongs(Cog):
+class Campaign(Cog):
     def __init__(self, bot):
         self.bot = bot
 
