@@ -21,10 +21,12 @@ class Campaign(Cog):
     @commands.group(name="near_tpk", aliases=["tpk", "neartpk"], invoke_without_command=True)
     async def near_tpk(self, ctx: context) -> None:
         """Lists the information for a given TPK."""
+        session_no = ctx.message.content.split()[-1]
+        print(session_no)
         if ctx.invoked_subcommand is None:
             info = await db_call(ctx, "select near_tpks.session_id, near_tpks.notes, sessions.date from near_tpks "
                                       "join sessions on near_tpks.session_id = sessions.id where near_tpks.id=?",
-                                      [ctx.subcommand_passed])
+                                      [session_no])
             if info:
                 day = self.format_date(info[0][2], "00:00")
                 await ctx.send(f"```The near TPK happened on {day_name[day.weekday()]} the "
@@ -34,11 +36,10 @@ class Campaign(Cog):
                 count = await db_call(ctx, "select count(*) from near_tpks")
                 await ctx.send(f"No tpk with that number found, please try a number between 1 and {count[0][0]}")
 
-    @near_tpk.command(name="add")
+    @near_tpk.command(name="add", invoke_without_command=True)
     @commands.check(is_authorized)
-    async def add_tpk(self, ctx: context, session_no: int, *notes: list) -> None:
+    async def add_tpk(self, ctx: context, session_no: int, *notes) -> None:
         """Adds a near TPK to the database. Restricted to Seb and Punky."""
-
         if not notes:
             notes = ""
         else:
@@ -269,7 +270,8 @@ class Campaign(Cog):
         await ctx.send("The link to the calender page is:"
                        "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
 
-    def get_indicator(self, day: int) -> str:
+    @staticmethod
+    def get_indicator(day: int) -> str:
         """Returns the indicator for the given number based on the last digit."""
         nth = {"1": "st", "2": "nd", "3": "rd"}
         if str(day)[-1] in nth.keys():
