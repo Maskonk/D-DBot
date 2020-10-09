@@ -279,7 +279,8 @@ class Campaign(Cog):
         else:
             return "th"
 
-    def format_date(self, date: str, time: str = "") -> datetime.date:
+    @staticmethod
+    def format_date(date: str, time: str = "") -> datetime.date:
         return parse(f"{date} {time}")
 
     def get_next_session(self, campaign_abb: str) -> str:
