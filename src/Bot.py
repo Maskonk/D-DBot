@@ -20,6 +20,10 @@ async def on_ready():
 
 @client.event
 async def on_command_error(ctx, error):
+    """
+    Error handler for the bot.
+    :param error: The error that occured.
+    """
     if hasattr(ctx.command, 'on_error'):
         return
     if isinstance(error, commands.CheckFailure):
