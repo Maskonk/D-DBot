@@ -21,7 +21,7 @@ class Campaign(Cog):
         await ctx.send(f"The party has had {count[0][0]} near Total Party Kills so far this campaign.")
 
     @commands.group(name="near_tpk", aliases=["tpk", "neartpk"], invoke_without_command=True)
-    async def near_tpk(self, ctx: context, campaign_abb: str = None, tpk_no: int = None) -> None:
+    async def near_tpk(self, ctx: context, campaign_abb: str, tpk_no: int) -> None:
         """Lists the information for a given TPK."""
         if ctx.invoked_subcommand is None:
             campaign = await self.get_campaign(ctx, campaign_abb)
@@ -31,29 +31,34 @@ class Campaign(Cog):
                                       "join sessions on near_tpks.session_id = sessions.id "
                                       "where near_tpks.campaign_id = ?",
                                       [campaign["id"]])
+            print(info)
 
             if 1 <= tpk_no <= len(info):
                 day = self.format_date(info[tpk_no-1][2])
                 await ctx.send(f"```The near TPK happened on {day_name[day.weekday()]} the "
                                f"{day.day}{self.get_indicator(day.day)} of {month_name[day.month]} {day.year} "
-                               f"in session number {info[0][0]}.\nNotes from the near TPK:\n{info[0][1]}```")
+                               f"in session number {info[tpk_no-1][0]}.\nNotes from the near TPK:\n"
+                               f"{info[tpk_no-1][1]}```")
             else:
                 count = await db_call(ctx, "select count(*) from near_tpks where campaign_id = ?", [campaign["id"]])
                 await ctx.send(f"No tpk with that number found, please try a number between 1 and {count[0][0]}")
 
     @near_tpk.command(name="add", invoke_without_command=True)
     @commands.check(is_authorized)
-    async def add_tpk(self, ctx: context, session_no: int, *notes) -> None:
+    async def add_tpk(self, ctx: context, campaign_abb: str, session_no: int, *notes) -> None:
         """Adds a near TPK to the database. Restricted to Seb and Punky."""
+        campaign = await self.get_campaign(ctx, campaign_abb)
+        if not campaign:
+            return
+
         if not notes:
             notes = ""
         else:
             notes = " ".join(notes)
 
-        await db_call(ctx, "insert into near_tpks (session_id, notes) values (?, ?)", [session_no, notes])
+        await db_call(ctx, "insert into near_tpks (session_id, campaign_id, notes) values (?, ?, ?)",
+                      [session_no, campaign["id"],  notes])
         await ctx.send("Near Total Party Kills updated.")
-        command = self.bot.get_command("neartpks")
-        await ctx.invoke(command)
 
     @near_tpk.command(name="update")
     @commands.check(is_authorized)
