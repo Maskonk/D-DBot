@@ -3,7 +3,7 @@ from discord import Game
 from discord.ext import commands
 from Cogs.Campaign import Campaign
 from Cogs.Dnd import Dnd
-from Cogs.Tts import Tts
+from Cogs.Voice import Voice
 
 bot_prefix = "-"
 with open('token.txt', 'r') as f:
@@ -63,5 +63,5 @@ async def github(ctx):
 
 client.add_cog(Dnd(client))
 client.add_cog(Campaign(client))
-client.add_cog(Tts(client))
+client.add_cog(Voice(client))
 client.run(token)

@@ -4,7 +4,7 @@ import pyttsx3
 import discord
 
 
-class Tts(Cog):
+class Voice(Cog):
     def __init__(self, bot):
         self.bot = bot
         self.engine = pyttsx3.init()
