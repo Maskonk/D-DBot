@@ -270,6 +270,10 @@ class Campaign(Cog):
         await ctx.send("The link to the calender page is:"
                        "\nhttps://fantasy-calendar.com/calendar.php?action=view&id=b74c2e0d1ff97f48c05b8270b043afd0")
 
+    @commands.command()
+    async def boop(self, ctx: context) -> None:
+        await self.get_campaign(ctx, "Test")
+
     @staticmethod
     def get_indicator(day: int) -> str:
         """Returns the indicator for the given number based on the last digit."""
@@ -283,5 +287,12 @@ class Campaign(Cog):
     def format_date(date: str, time: str = "") -> datetime.date:
         return parse(f"{date} {time}")
 
-    def get_next_session(self, campaign_abb: str) -> str:
+    async def get_campaign(self, ctx: context, campaign_abb: str) -> dict:
+        db = await db_call(ctx, "select * from campaigns where abbreviation=?", [campaign_abb])
+        db = db[0]
+        campaign = {"id": db[0], "name": db[1], "abbreviation": db[2], "gm": db[3], "role": db[4], "wa": db[5],
+             "active": db[6]}
+        return campaign
+
+    def get_next_session(self, ctx: context, campaign_abb: str) -> str:
         pass
