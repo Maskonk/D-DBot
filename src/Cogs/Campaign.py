@@ -260,9 +260,13 @@ class Campaign(Cog):
         await ctx.send(msg)
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil", "worldanvil"])
-    async def world_anvil(self, ctx: context) -> None:
+    async def world_anvil(self, ctx: context, campaign_abb: str) -> None:
         """Link to the campaign's World Anvil page."""
-        await ctx.send("The link to the World Anvil page is:\nhttps://www.worldanvil.com/w/ehldaron-sebaddon")
+        campaign = await self.get_campaign(ctx, campaign_abb)
+        if campaign["wa"]:
+            await ctx.send(f"The link to the World Anvil page is:\n{campaign['wa']}")
+        else:
+            await ctx.send("That campaign does not have a World Anvil page registered.")
 
     @commands.command()
     async def calender(self, ctx: context) -> None:
@@ -272,7 +276,8 @@ class Campaign(Cog):
 
     @commands.command()
     async def boop(self, ctx, CA):
-        await self.get_next_session(ctx, CA)
+        campaign = await self.get_campaign(ctx, CA)
+        await self.get_next_session(ctx, campaign["id"])
 
     @staticmethod
     def get_indicator(day: int) -> str:
@@ -290,10 +295,13 @@ class Campaign(Cog):
     @staticmethod
     async def get_campaign(ctx: context, campaign_abb: str) -> dict:
         db = await db_call(ctx, "select * from campaigns where abbreviation=?", [campaign_abb])
-        db = db[0]
-        campaign = {"id": db[0], "name": db[1], "abbreviation": db[2], "gm": db[3], "role": db[4], "wa": db[5],
-                    "active": db[6]}
-        return campaign
+        if db:
+            db = db[0]
+            campaign = {"id": db[0], "name": db[1], "abbreviation": db[2], "gm": db[3], "role": db[4], "wa": db[5],
+                        "calender": db[6], "active": db[7]}
+            return campaign
+        else:
+            await ctx.send("There is no campaign with that name.")
 
     @staticmethod
     async def get_next_session(ctx: context, campaign_id: str) -> datetime:
