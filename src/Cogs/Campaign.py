@@ -90,9 +90,11 @@ class Campaign(Cog):
         await ctx.send(f"That campaign has had {count[0][0]} sessions so far this campaign.")
 
     @commands.group(name="session", aliases=[], invoke_without_command=True)
-    async def session(self, ctx: context) -> None:
+    async def session(self, ctx: context, campaign_abb: str, session_no: int) -> None:
         if ctx.invoked_subcommand is None:
-            session_no = ctx.message.content.split()[-1]
+            campaign = await self.get_campaign(ctx, campaign_abb)
+            if not campaign:
+                return
             info = await db_call(ctx, "select date, notes from sessions where id=?", [session_no])
             if info:
                 day = self.format_date(info[0][0])
