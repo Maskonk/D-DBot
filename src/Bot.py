@@ -4,6 +4,7 @@ from discord.ext import commands
 from Cogs.Campaign import Campaign
 from Cogs.Dnd import Dnd
 from Cogs.Voice import Voice
+from Cogs.Swtor import Swtor
 
 bot_prefix = "-"
 with open('token.txt', 'r') as f:
@@ -63,5 +64,6 @@ async def github(ctx):
 
 client.add_cog(Dnd(client))
 client.add_cog(Campaign(client))
-client.add_cog(Voice(client))
+# client.add_cog(Voice(client))
+client.add_cog(Swtor(client))
 client.run(token)
