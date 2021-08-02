@@ -284,7 +284,8 @@ class Campaign(Cog):
 
     @staticmethod
     async def get_campaign(ctx: context, campaign_abb: str) -> dict:
-        db = await db_call(ctx, "select * from campaigns where abbreviation=?", [campaign_abb])
+        db = await db_call(ctx, "select id, name, abbreviation, gm, role, world_anvil, calender, active from campaigns "
+                                "where abbreviation=?", [campaign_abb])
         if db:
             db = db[0]
             campaign = {"id": db[0], "name": db[1], "abbreviation": db[2], "gm": db[3], "role": db[4], "wa": db[5],
