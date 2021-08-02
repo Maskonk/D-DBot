@@ -26,9 +26,19 @@ class Voice(Cog):
 
     @commands.command()
     async def speak(self, ctx: context, *text) -> None:
+        # if ctx.author.id != 168009927015661568:
+        #     return
         msg = " ".join(text)
         self.engine.save_to_file(msg, 'test.mp3')
         self.engine.runAndWait()
         source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(executable=r"D:\Program Files\ffmpeg\bin\ffmpeg.exe", source="test.mp3"))
         ctx.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
         # await ctx.send(msg)
+
+    @commands.command(aliases=["se"])
+    async def sound_effect(self, ctx, file):
+        ctx.voice_client.volume = 10 / 100
+        source = discord.PCMVolumeTransformer(
+            discord.FFmpegPCMAudio(executable=r"D:\Program Files\ffmpeg\bin\ffmpeg.exe",
+                                   source=f"./sound_effects/{file}.mp3"))
+        ctx.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
