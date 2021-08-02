@@ -4,7 +4,7 @@ from discord.ext import commands
 from Cogs.Campaign import Campaign
 from Cogs.Dnd import Dnd
 
-bot_prefix = "-"
+bot_prefix = "."
 with open('token.txt', 'r') as f:
     token = f.read()
 
