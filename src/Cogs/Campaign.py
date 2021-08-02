@@ -5,6 +5,7 @@ from calendar import month_name, day_name
 from src.util import db_call, is_authorized
 from discord import Member
 from dateutil.parser import parse
+from arrow import now, get
 
 
 class Campaign(Cog):
@@ -91,23 +92,31 @@ class Campaign(Cog):
 
     @commands.group(name="session", aliases=[], invoke_without_command=True)
     async def session(self, ctx: context, campaign_abb: str, session_no: int) -> None:
+        """Shows the notes for a spefic session."""
         if ctx.invoked_subcommand is None:
             campaign = await self.get_campaign(ctx, campaign_abb)
             if not campaign:
                 return
-            info = await db_call(ctx, "select date, notes from sessions where id=?", [session_no])
-            if info:
-                day = self.format_date(info[0][0])
+            campaign = await self.get_campaign(ctx, campaign_abb)
+            if not campaign:
+                return
+
+            sessions = await db_call(ctx, "select date, notes from sessions where campaign = :id order by date",
+                                     [int(campaign.get("id"))])
+            if sessions:
+                session = sessions[session_no-1]
+                day = self.format_date(session[0])
                 await ctx.send(f"```Session number {session_no} happened on {day_name[day.weekday()]} the "
                                f"{day.day}{self.get_indicator(day.day)} of {month_name[day.month]} {day.year}."
-                               f"\nNotes from the session:\n{info[0][1]}```")
+                               f"\nNotes from the session:\n{session[1]}```")
             else:
                 count = await db_call(ctx, "select count(*) from sessions")
                 await ctx.send(f"No session with that number found, please try a number between 1 and {count[0][0]}")
 
     @session.command(name="add")
     @commands.check(is_authorized)
-    async def add_session(self, ctx: context, date: str = None, time: str = None, *notes: list) -> None:
+    async def add_session(self, ctx: context, campaign_abb: str, date: str = None, time: str = None, *notes) \
+            -> None:
         """Adds a session to the database. Restricted to Seb and Punky."""
         if date is None:
             date = datetime.today().date()
@@ -119,14 +128,19 @@ class Campaign(Cog):
         else:
             notes = " ".join(notes)
 
-        await db_call(ctx, "insert into sessions (date, notes) values (?, ?)", [date, notes])
-        await ctx.send("Session count updated.")
+        campaign = await self.get_campaign(ctx, campaign_abb)
+
+        if not campaign:
+            return
+        await db_call(ctx, "insert into sessions (date, notes, campaign) values (?, ?, ?)",
+                      [date, notes, int(campaign.get("id"))])
+        await ctx.send("Session added.")
         command = self.bot.get_command("sessions")
-        await ctx.invoke(command)
+        await ctx.invoke(command, campaign_abb)
 
     @session.command(name="update")
     @commands.check(is_authorized)
-    async def update_session(self, ctx: context, session_no: int, *notes: list) -> None:
+    async def update_session(self, ctx: context, campaign_abb: str, session_no: int, *notes) -> None:
         """Update the notes for a given session."""
 
         if not notes:
@@ -134,12 +148,23 @@ class Campaign(Cog):
         else:
             notes = " ".join(notes)
 
-        await db_call(ctx, "update sessions set (notes) = (?) where id=?", [notes, session_no])
+        campaign = await self.get_campaign(ctx, campaign_abb)
+
+        if not campaign:
+            return
+
+        sessions = await db_call(ctx, "select id, date, notes from sessions where campaign = :id order by date",
+                                 [int(campaign.get("id"))])
+        if sessions:
+            session = sessions[session_no - 1]
+            session_id = session[0]
+
+        await db_call(ctx, "update sessions set (notes) = (?) where id=?", [notes, session_id])
         await ctx.send("Notes for that session have been updates.")
 
     @commands.group(name="next", aliases=[], invoke_without_command=True)
-    async def next(self, ctx: context, campaign_abb: list) -> None:
-        """The next session of the Righting Wrongs Campaign."""
+    async def next(self, ctx: context, campaign_abb: str) -> None:
+        """Shows the time until the next session of the a Campaign."""
         if ctx.invoked_subcommand is None:
             db = await db_call(ctx, "select date, name from next_sessions join campaigns on next_sessions.campaign = "
                                     "campaigns.id where campaigns.abbreviation=?", [campaign_abb])
@@ -148,28 +173,15 @@ class Campaign(Cog):
                 return
 
             campaign_name = db[0][1]
-            date = datetime.strptime(f"{db[0][0]} 19:00:00", "%Y-%m-%d %H:%M:%S")
-            date_difference = date - datetime.now()
-            days = divmod(date_difference.total_seconds(), 86400)
-            hours = divmod(days[1], 3600)
-            minutes = divmod(hours[1], 60)
-            seconds = divmod(minutes[1], 1)
+            date = get(db[0][0]).to("GMT+1")
             msg = f"The next session of {campaign_name} will be on {day_name[date.weekday()]} " \
                   f"the {date.day}{self.get_indicator(date.day)} of " \
                   f"{month_name[date.month]}, starting at {date.hour}h" \
                   f"{date.minute} UK time or {date.hour + 1}h{date.minute} " \
                   f"Belgian time."
 
-            if date > datetime.now():
-                msg += "\nIn "
-                if days[0] > 0:
-                    msg += f"{days[0]: .0f} days "
-                if hours[0] > 0:
-                    msg += f"{hours[0]: .0f} hours "
-                if minutes[0] > 0:
-                    msg += f"{minutes[0]: .0f} minutes "
-                if seconds[0] > 0:
-                    msg += f"{seconds[0]: .0f} seconds."
+            if date > now():
+                msg += f"\n{date.humanize(granularity=['day', 'hour', 'minute'])}"
 
             else:
                 msg += "\nThis date has already passed and a new one should be added soon."
@@ -177,21 +189,14 @@ class Campaign(Cog):
 
     @next.command(name='update', aliases=["update_next", "Update"])
     @commands.check(is_authorized)
-    async def update_next_session(self, ctx: context, campaign: str, date: str, time: str = "19:00") -> None:
+    async def update_next_session(self, ctx: context, campaign: str, date: str, time: str = "19:00",
+                                  timezone: str = "GMT+1") -> None:
         """To update the next session of the Righting Wrongs Campaign's date. Restricted to Seb and Punky.
                 Format dd/mm/yy hh:mm, hour in UK time."""
-        date = date.split("/")
-        if int(date[2]) < 100:
-            date[2] = int(date[2]) + 2000
-
-        if ":" in time:
-            time = time.split(":")
-        elif "h" in time:
-            time = time.split("h")
-
-        new_date = datetime(int(date[2]), int(date[1]), int((date[0])), (int(time[0])), int(time[1]), 00)
-
-        if new_date < datetime.now():
+        date = parse(f"{date} {time}", dayfirst=True)
+        date = get(date, tzinfo=timezone).to("GMT+1")
+        print(date)
+        if date < now().to(timezone):
             await ctx.send("That date has already passed. Please enter a future date.")
             return
 
@@ -201,7 +206,7 @@ class Campaign(Cog):
             await ctx.send("That is not a valid campaign name, please make sure your capitalization is correct.")
             return
 
-        await db_call(ctx, "update next_sessions set (date) = (?) where id=?", [new_date.date(), int(id)])
+        await db_call(ctx, "update next_sessions set (date) = (?) where id=?", [str(date), int(id)])
 
         await ctx.send("Date updated.")
         command = self.bot.get_command("next")
@@ -218,68 +223,28 @@ class Campaign(Cog):
             await ctx.send("That is not a valid campaign name, please make sure your capitalization is correct.")
             return
 
+        if not db[0][2]:
+            await ctx.send("No role to ping for that campaign.")
+            return
+
         campaign_name = db[0][1]
-        date = datetime.strptime(f"{db[0][0]} 19:00:00", "%Y-%m-%d %H:%M:%S")
+        date = get(parse(db[0][0], dayfirst=True), tzinfo="GMT+1")
         role_id = int(db[0][2])
-        date_difference = date - datetime.now()
         role = ctx.guild.get_role(role_id)
-        days = divmod(date_difference.total_seconds(), 86400)
-        hours = divmod(days[1], 3600)
-        minutes = divmod(hours[1], 60)
-        seconds = divmod(minutes[1], 1)
+        if not role:
+            await ctx.send("Could not find that role.")
+            return
+
         msg = f"{role.mention} The next session of {campaign_name} will be on {day_name[date.weekday()]} "\
               f"the {date.day}{self.get_indicator(date.day)} of " \
               f"{month_name[date.month]}, starting at {date.hour}h" \
               f"{date.minute} UK time or {date.hour + 1}h{date.minute} " \
               f"Belgian time."
-        if date > datetime.now():
-            msg += "\nIn "
-            if days[0] > 0:
-                msg += f"{days[0]: .0f} days "
-            if hours[0] > 0:
-                msg += f"{hours[0]: .0f} hours "
-            if minutes[0] > 0:
-                msg += f"{minutes[0]: .0f} minutes "
-            if seconds[0] > 0:
-                msg += f"{seconds[0]: .0f} seconds."
+        if date > now():
+            msg += f"\n{date.humanize(granularity=['day', 'hour', 'minute'])}"
 
         else:
             msg += "\nThis date has already passed and a new one should be added soon."
-        await ctx.send(msg)
-
-    @commands.command()
-    @commands.check(is_authorized)
-    async def late(self, ctx: context, abb: str, user: Member) -> None:
-        """Telling people they're late!"""
-
-        db = await db_call(ctx, "select date from next_sessions join campaigns on next_sessions.campaign = "
-                                "campaigns.id where campaigns.abbreviation=?", [abb])
-        if not db:
-            await ctx.send("That is not a valid campaign name, please make sure your capitalization is correct.")
-            return
-
-        date = datetime.strptime(f"{db[0][0]} 19:00:00", "%Y-%m-%d %H:%M:%S")
-
-        if date < datetime.now():
-            date_difference = datetime.now() - date
-            days = divmod(date_difference.total_seconds(), 86400)
-            hours = divmod(days[1], 3600)
-            minutes = divmod(hours[1], 60)
-            seconds = divmod(minutes[1], 1)
-            msg = f"{user.mention} you are late! The session was supposed to start at {date.hour}h" \
-                  f"{date.minute} UK time or {date.hour + 1}h{date.minute} " \
-                  f"Belgian time.\n"
-            if days[0] > 0:
-                msg += f"{days[0]: .0f} days "
-            if hours[0] > 0:
-                msg += f"{hours[0]: .0f} hours "
-            if minutes[0] > 0:
-                msg += f"{minutes[0]: .0f} minutes "
-            if seconds[0] > 0:
-                msg += f"{seconds[0]: .0f} seconds late."
-        else:
-            msg = f"{user.nick} is not late yet, hold your horses."
-
         await ctx.send(msg)
 
     @commands.command(aliases=["wa", "WA", "WorldAnvil", "Worldanvil", "worldanvil"])
@@ -303,11 +268,6 @@ class Campaign(Cog):
             await ctx.send(f"The link to the calender page is:\n{campaign['calender']}")
         else:
             await ctx.send("That campaign does not have a calender page registered.")
-
-    @commands.command()
-    async def boop(self, ctx, CA):
-        campaign = await self.get_campaign(ctx, CA)
-        await self.get_next_session(ctx, campaign["id"])
 
     @staticmethod
     def get_indicator(day: int) -> str:
